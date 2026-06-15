@@ -263,6 +263,12 @@ const ITEMS = {
   chapeau:      {name:"Chapeau de plumes", c:"#e8e4da", stack:1, w:1,   equip:"tete",  def:1, bonus:"défense +1 · les animaux fuient moins loin"},
   tunique:      {name:"Tunique de cuir",   c:"#a3754d", stack:1, w:4,   equip:"torse", def:2, bonus:"défense +2 · +25 de charge max"},
   bottes:       {name:"Bottes de cuir",    c:"#7c5836", stack:1, w:2,   equip:"pieds", def:1, bonus:"défense +1 · +15% de vitesse"},
+  os:              {name:"Os",               c:"#ddd8c8", stack:30, w:0.5},
+  griffe:          {name:"Griffe de kobold", c:"#8ab0c0", stack:10, w:0.3},
+  fourrure_lunaire:{name:"Fourrure lunaire", c:"#7080b0", stack:5,  w:1.5},
+  plume_noire:     {name:"Plume noire",      c:"#2e2e42", stack:30, w:0.1},
+  torche:          {name:"Torche",           c:"#e8a030", stack:10, w:0.8},
+  dague:           {name:"Dague de griffes", c:"#8ab0c0", stack:1,  w:1.5, equip:"arme", def:0, bonus:"+2 dégâts · attaque rapide contre les kobolds"},
 };
 
 /* ---------- Compétences (montent en pratiquant, comme dans Valheim) ---------- */
@@ -291,8 +297,10 @@ let boostT = 0;                                   // bonus de vitesse après avo
 const equip = {arme:null, tete:null, torse:null, pieds:null};   // équipement porté
 function hasEquip(k, id){ return equip[k] && equip[k].id===id; }
 /* ---------- Force & défense (arme + armure + compétences) ---------- */
-function statForce(){      // dégâts par coup sur les animaux
-  return 1 + Math.floor((SKILLS.chasse.lvl-1)/4) + (hasEquip("arme","lance") ? 1 : 0);
+function statForce(){      // dégâts par coup sur les animaux / kobolds
+  return 1 + Math.floor((SKILLS.chasse.lvl-1)/4)
+    + (hasEquip("arme","lance") ? 1 : 0)
+    + (hasEquip("arme","dague") ? 2 : 0);
 }
 function statForceBois(){  // dégâts par coup sur les arbres
   return 1 + Math.floor((SKILLS.bucheron.lvl-1)/4) + (hasEquip("arme","hache_pierre") ? 1 : 0);
@@ -353,6 +361,8 @@ const RECIPES = [
   {id:"chapeau",      label:"Chapeau de plumes", cost:{plume:4, cuir:1},           gives:{chapeau:1}},
   {id:"tunique",      label:"Tunique de cuir",   cost:{cuir:4},                    gives:{tunique:1}},
   {id:"bottes",       label:"Bottes de cuir",    cost:{cuir:2},                    gives:{bottes:1}},
+  {id:"torche",       label:"Torche",            cost:{bois:1, cuir:1},            gives:{torche:3}},
+  {id:"dague",        label:"Dague de griffes",  cost:{griffe:2, planche:1},       gives:{dague:1}},
 ];
 function canCraft(r){ return Object.entries(r.cost).every(([k,n])=>countItem(k)>=n); }
 function craft(r){
@@ -894,6 +904,45 @@ const ICON_SRC = {
     g.fillStyle="#5b4128"; g.fillRect(2,9,4,1); g.fillRect(7,9,4,1);
     g.fillStyle="#a3754d"; g.fillRect(2,3,3,1); g.fillRect(7,3,3,1);
   }),
+  os: icon12(g=>{
+    g.fillStyle="#ddd8c8"; g.fillRect(4,1,4,10); g.fillRect(3,1,6,2); g.fillRect(3,9,6,2);
+    g.fillStyle="#c8c2b0"; g.fillRect(5,3,2,6);
+    g.fillStyle="#ede8d8"; g.fillRect(4,2,1,1); g.fillRect(4,9,1,1);
+  }),
+  griffe: icon12(g=>{
+    g.fillStyle="#8ab0c0";
+    for(let i=0;i<4;i++) g.fillRect(2+i*2, 2, 1, 7-i);
+    g.fillStyle="#c0d4e0"; g.fillRect(2,2,1,1); g.fillRect(4,2,1,1);
+    g.fillStyle="#5a7a88"; g.fillRect(2,8,7,1);
+    g.fillStyle="#b0c8d8"; g.fillRect(6,2,1,1);
+  }),
+  fourrure_lunaire: icon12(g=>{
+    g.fillStyle="#7080b0"; g.fillRect(2,3,8,7); g.fillRect(1,4,10,5);
+    g.fillStyle="#9ab0d0"; g.fillRect(3,4,6,4);
+    g.fillStyle="#dde8ff"; g.fillRect(5,5,2,2);
+    g.fillStyle="#5060a0"; g.fillRect(2,9,8,1);
+  }),
+  plume_noire: icon12(g=>{
+    g.fillStyle="#2e2e42";
+    for(let i=0;i<7;i++) g.fillRect(2+i, 8-i, 3, 2);
+    g.fillStyle="#6060a0";
+    for(let i=0;i<4;i++) g.fillRect(1+i, 10-i, 1, 1);
+    g.fillStyle="#8080c0"; g.fillRect(8,1,1,1);
+  }),
+  torche: icon12(g=>{
+    g.fillStyle="#8a6240"; g.fillRect(5,5,2,7);
+    g.fillStyle="#e8743f"; g.fillRect(4,2,4,4); g.fillRect(3,3,6,3);
+    g.fillStyle="#f4c542"; g.fillRect(5,3,2,3);
+    g.fillStyle="#fff3bd"; g.fillRect(5,2,1,1);
+  }),
+  dague: icon12(g=>{
+    g.fillStyle="#6a4a30";
+    for(let i=0;i<4;i++) g.fillRect(3+i, 9-i, 2, 1);
+    g.fillStyle="#8ab0c0";
+    for(let i=0;i<6;i++) g.fillRect(4+i, 8-i, 1, 1);
+    g.fillStyle="#c0d4e0"; g.fillRect(9,3,1,1); g.fillRect(10,2,1,1);
+    g.fillStyle="#5a7a88"; g.fillRect(3,9,2,2);
+  }),
 };
 const ICON = {}; for(const k in ICON_SRC) ICON[k] = ICON_SRC[k].toDataURL();
 
@@ -972,6 +1021,80 @@ const ANIMAL_TYPES = {
   sanglier: {name:"Sanglier", hp:4, speed:1.8, flee:1.6, drops:{viande:[2,3], cuir:[1,1]},  xp:10, aggressive:true, dmg:1},
 };
 const ANIMAL_LIST = Object.keys(ANIMAL_TYPES);
+
+/* ====================== Kobolds — Fils de la Lune Brisée ====================== */
+const KOBOLD_IMG = {
+  eclaireur: frames2(12,18,(g,f)=>{
+    g.fillStyle="#7a7a8a"; g.fillRect(3,0,6,5);
+    g.fillStyle="#6a6a7a"; g.fillRect(4,3,4,3);
+    g.fillStyle="#8a8a9a"; g.fillRect(2,0,2,3); g.fillRect(8,0,2,3);
+    g.fillStyle="#ffe040"; g.fillRect(4,1,1,2); g.fillRect(7,1,1,2);
+    g.fillStyle="#f0f0e0"; g.fillRect(5,5,1,1); g.fillRect(7,5,1,1);
+    g.fillStyle="#6a6a7a"; g.fillRect(3,6,6,5); g.fillRect(1,6,2,5); g.fillRect(9,6,2,5);
+    g.fillStyle="#b0c0c8"; g.fillRect(1,11,1,2); g.fillRect(2,11,1,2); g.fillRect(9,11,1,2); g.fillRect(10,11,1,2);
+    g.fillStyle="#5a5a6a";
+    if(f){ g.fillRect(4,11,2,5); g.fillRect(7,11,2,5); }
+    else  { g.fillRect(3,11,2,5); g.fillRect(8,11,2,5); }
+    g.fillStyle="#4a4a5a"; g.fillRect(3,15,3,2); g.fillRect(7,15,3,2);
+  }),
+  guerrier: frames2(14,18,(g,f)=>{
+    g.fillStyle="#5a5a68"; g.fillRect(3,0,8,5);
+    g.fillStyle="#4a4a58"; g.fillRect(4,3,6,3);
+    g.fillStyle="#6a6a78"; g.fillRect(2,0,3,3); g.fillRect(9,0,3,3);
+    g.fillStyle="#ff8020"; g.fillRect(4,1,2,2); g.fillRect(8,1,2,2);
+    g.fillStyle="#3a2a28"; g.fillRect(7,2,1,3);
+    g.fillStyle="#f0f0e0"; g.fillRect(5,5,1,2); g.fillRect(8,5,1,2);
+    g.fillStyle="#4a4a58"; g.fillRect(2,6,10,6); g.fillRect(1,9,2,4); g.fillRect(11,9,2,4);
+    g.fillStyle="#d0c8b0"; g.fillRect(1,6,2,3); g.fillRect(11,6,2,3);
+    g.fillStyle="#b0c0c8"; g.fillRect(1,13,1,2); g.fillRect(2,13,1,2); g.fillRect(11,13,1,2); g.fillRect(12,13,1,2);
+    g.fillStyle="#3a3a48";
+    if(f){ g.fillRect(4,12,3,5); g.fillRect(8,12,3,5); }
+    else  { g.fillRect(3,12,3,5); g.fillRect(9,12,3,5); }
+    g.fillStyle="#2a2a38"; g.fillRect(3,16,4,2); g.fillRect(8,16,4,2);
+  }),
+  chef: frames2(16,20,(g,f)=>{
+    g.fillStyle="#1a1a28"; g.fillRect(1,7,14,8); g.fillRect(0,8,2,7); g.fillRect(14,8,2,7);
+    g.fillStyle="#3a3a48"; g.fillRect(3,0,10,6);
+    g.fillStyle="#2a2a38"; g.fillRect(4,4,8,4);
+    g.fillStyle="#4a4a58"; g.fillRect(2,0,3,4); g.fillRect(11,0,3,4);
+    g.fillStyle="#ff2020"; g.fillRect(4,1,3,2); g.fillRect(9,1,3,2);
+    g.fillStyle="#ff8080"; g.fillRect(4,1,1,1); g.fillRect(9,1,1,1);
+    g.fillStyle="#f0f0e0"; g.fillRect(5,7,1,2); g.fillRect(8,7,2,2); g.fillRect(11,7,1,2);
+    g.fillStyle="#8ab0c8";
+    g.fillRect(0,15,1,3); g.fillRect(1,15,1,3); g.fillRect(2,14,1,3);
+    g.fillRect(14,15,1,3); g.fillRect(15,15,1,3); g.fillRect(13,14,1,3);
+    g.fillStyle="#12121e";
+    if(f){ g.fillRect(4,15,4,5); g.fillRect(9,15,4,5); }
+    else  { g.fillRect(3,15,4,5); g.fillRect(10,15,4,5); }
+    g.fillStyle="#0a0a14"; g.fillRect(3,19,5,2); g.fillRect(9,19,5,2);
+  }),
+};
+const KOBOLD_TYPES = {
+  eclaireur: {name:"Éclaireur kobold", hp:3,  speed:3.8, detect:5, drops:{os:[1,1],griffe:[0,1]},                         xp:5,  dmg:1, w:12, h:18},
+  guerrier:  {name:"Guerrier kobold",  hp:6,  speed:2.5, detect:4, drops:{os:[1,2],griffe:[1,1],cuir:[1,2]},              xp:10, dmg:2, w:14, h:18},
+  chef:      {name:"Chef kobold",      hp:12, speed:2.8, detect:6, drops:{griffe:[2,3],fourrure_lunaire:[1,1],cuir:[2,3]},xp:20, dmg:3, w:16, h:20},
+};
+const kobolds = [];
+function spawnKobold(typeHint){
+  const type = typeHint || (Math.random()<0.6?"eclaireur":"guerrier");
+  const T = KOBOLD_TYPES[type];
+  let x = MAP*0.6, y = MAP*0.3;
+  for(let i=0;i<150;i++){
+    const cx2 = MAP*0.52 + rnd()*(MAP*0.40);
+    const cy2 = MAP*0.08 + rnd()*(MAP*0.38);
+    if(blocked[Math.floor(cy2)][Math.floor(cx2)] || ground[Math.floor(cy2)][Math.floor(cx2)]>=3) continue;
+    if(Math.hypot(cx2-spawn.x, cy2-spawn.y)<14) continue;
+    x=cx2; y=cy2; break;
+  }
+  kobolds.push({type, x, y, hp:T.hp, state:"patrol", t:1+rnd()*2,
+    vx:0, vy:0, animT:0, hurtT:0, dead:false, flip:false,
+    respawn:0, atkCd:0, alertT:0,
+    patrolTx:x+(rnd()-0.5)*4, patrolTy:y+(rnd()-0.5)*4});
+}
+for(let i=0;i<8;i++) spawnKobold("eclaireur");
+for(let i=0;i<4;i++) spawnKobold("guerrier");
+spawnKobold("chef");
+
 const CLOUD = makeCanvas(64,24,g=>{
   g.fillStyle="rgba(255,255,255,0.85)";
   g.fillRect(8,10,48,8); g.fillRect(16,4,20,8); g.fillRect(38,7,16,6);
@@ -1090,6 +1213,60 @@ function duskGlow(){                 // lueur orangée au couchant / levant
 function mixC(a,b,k){ return [a[0]+(b[0]-a[0])*k, a[1]+(b[1]-a[1])*k, a[2]+(b[2]-a[2])*k]; }
 function cssC(c){ return `rgb(${Math.round(c[0])},${Math.round(c[1])},${Math.round(c[2])})`; }
 
+/* ====================== Esprits de la Nature ====================== */
+const SPIRIT_GLOW_AO = makeCanvas(36,36,g=>{
+  const gr = g.createRadialGradient(18,18,1,18,18,18);
+  gr.addColorStop(0,"rgba(100,255,130,0.95)");
+  gr.addColorStop(0.4,"rgba(50,200,80,0.38)");
+  gr.addColorStop(1,"rgba(30,180,60,0)");
+  g.fillStyle=gr; g.fillRect(0,0,36,36);
+});
+const SPIRIT_GLOW_RAKA = makeCanvas(36,36,g=>{
+  const gr = g.createRadialGradient(18,18,1,18,18,18);
+  gr.addColorStop(0,"rgba(255,90,60,0.95)");
+  gr.addColorStop(0.4,"rgba(200,40,20,0.38)");
+  gr.addColorStop(1,"rgba(180,10,0,0)");
+  g.fillStyle=gr; g.fillRect(0,0,36,36);
+});
+
+function wrapText(str, maxChars){
+  const words=str.split(" "); const lines=[]; let cur="";
+  for(const w of words){
+    if((cur+" "+w).trim().length<=maxChars) cur=(cur+" "+w).trim();
+    else { if(cur) lines.push(cur); cur=w; }
+  }
+  if(cur) lines.push(cur); return lines;
+}
+function roundRect(g,x,y,w,h,r){
+  g.beginPath();
+  g.moveTo(x+r,y); g.lineTo(x+w-r,y); g.quadraticCurveTo(x+w,y,x+w,y+r);
+  g.lineTo(x+w,y+h-r); g.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  g.lineTo(x+r,y+h); g.quadraticCurveTo(x,y+h,x,y+h-r);
+  g.lineTo(x,y+r); g.quadraticCurveTo(x,y,x+r,y); g.closePath();
+}
+
+const spiritBubbles = [];
+function spiritSay(speaker, msg, duration=5){
+  const idx = spiritBubbles.findIndex(b=>b.speaker===speaker);
+  if(idx>=0) spiritBubbles.splice(idx,1);
+  spiritBubbles.push({speaker, msg, t:duration, maxT:duration});
+}
+
+const ao = {
+  x:spawn.x+1.8, y:spawn.y-0.5, ph:0,
+  visible:true, cooldown:4, talkTimer:12,
+  seenBois:false, seenPlanche:false, seenFeu:false,
+  trail:[],
+};
+const raka = {
+  x:spawn.x-3, y:spawn.y-3, ph:Math.PI,
+  visible:false, emerged:false, cooldown:0,
+  targetX:spawn.x-3, targetY:spawn.y-3,
+  trail:[],
+};
+// Message de bienvenue d'Ao
+spiritSay("ao", "Je suis Ao, esprit de la forêt. Coupe un arbre pour commencer.", 7);
+
 // lucioles nocturnes avec halo lumineux pré-rendu
 const GLOW = makeCanvas(24,24,g=>{
   const gr = g.createRadialGradient(12,12,1,12,12,12);
@@ -1189,6 +1366,31 @@ function hitAnimal(a){
   }
 }
 
+function hitKobold(k){
+  const p = toScreen(player.x, player.y), s = toScreen(k.x, k.y);
+  player.dir = s.x<p.x ? "left" : "right";
+  const dmg = statForce();
+  k.hp -= dmg; k.hurtT = 0.3; k.alertT = 3;
+  const T = KOBOLD_TYPES[k.type];
+  if(k.hp > Math.ceil(T.hp*0.25)){ k.state="charge"; k.t=6; }
+  else { k.state="flee"; k.t=3; }
+  burst(s.x, s.y-6, "#8ab0c8", 6);
+  gainXP("chasse", 1);
+  if(k.hp<=0){
+    gainXP("chasse", T.xp);
+    for(const [id,[mn,mx]] of Object.entries(T.drops)){
+      const n = mn + Math.floor(Math.random()*(mx-mn+1));
+      if(n>0) groundItems.push({id, qty:n, x:k.x+(Math.random()-0.5)*0.6,
+        y:k.y+(Math.random()-0.5)*0.6, ph:Math.random()*6.28, cool:0.6});
+    }
+    floats.push({sx:s.x, sy:s.y-18, t:1.5, str:`${T.name} vaincu !`, c:"#6080a0"});
+    burst(s.x, s.y-4, "#4a6a88", 10);
+    k.dead=true; k.respawn=60+Math.random()*40;
+    if(!raka.visible){ raka.visible=true; }
+    spiritSay("raka","Bien. Mais d'autres viendront.",4);
+  }
+}
+
 function toScreen(tx,ty){ return { x:(tx-ty)*(TW/2), y:(tx+ty)*(TH/2) }; }
 function isBlocked(tx,ty){
   if(tx<0.3||ty<0.3||tx>MAP-0.3||ty>MAP-0.3) return true;
@@ -1208,6 +1410,11 @@ function nearestTarget(){
     const dist = Math.hypot(a.x-player.x, a.y-player.y);
     if(dist<bd){ bd=dist; best={kind:"animal", a}; }
   }
+  for(const k of kobolds){
+    if(k.dead) continue;
+    const dist = Math.hypot(k.x-player.x, k.y-player.y);
+    if(dist<bd){ bd=dist; best={kind:"kobold", k}; }
+  }
   return best;
 }
 function doAction(){
@@ -1216,6 +1423,7 @@ function doAction(){
   player.swing = SWING_TIME;
   if(!tgt) return;
   if(tgt.kind==="animal"){ hitAnimal(tgt.a); return; }
+  if(tgt.kind==="kobold"){ hitKobold(tgt.k); return; }
   const t = tgt.d;
   // tourner le héros vers la cible (gauche/droite à l'écran)
   const s = toScreen(t.tx+0.5, t.ty+0.5), p = toScreen(player.x, player.y);
@@ -1413,6 +1621,136 @@ function loop(now){
       if(Math.abs(sdx)>0.05) a.flip = sdx<0;
     }
   }
+  // kobolds : patrouille, détection, charge, fuite
+  for(const k of kobolds){
+    if(k.hurtT>0) k.hurtT=Math.max(0,k.hurtT-dt);
+    if(k.alertT>0) k.alertT-=dt;
+    if(k.dead){ k.respawn-=dt; continue; }
+    const T=KOBOLD_TYPES[k.type];
+    const pd=Math.hypot(player.x-k.x, player.y-k.y);
+    if(k.alertT>0 && k.state==="charge"){
+      for(const k2 of kobolds){
+        if(k2===k||k2.dead) continue;
+        if(Math.hypot(k2.x-k.x,k2.y-k.y)<4 && k2.state==="patrol"){ k2.state="charge"; k2.t=5; }
+      }
+    }
+    if(pd<T.detect && k.state==="patrol"){
+      k.state="charge"; k.t=6; k.alertT=3;
+      const ks=toScreen(k.x,k.y);
+      floats.push({sx:ks.x, sy:ks.y-14, t:0.9, str:"*hrrrk*", c:"#5a3a5a"});
+      if(!raka.visible){ raka.visible=true; }
+    }
+    if(k.state==="flee"){
+      k.t-=dt;
+      const ang=Math.atan2(k.y-player.y, k.x-player.x);
+      k.vx=Math.cos(ang)*T.speed*0.8; k.vy=Math.sin(ang)*T.speed*0.8;
+      if(k.t<=0 && pd>T.detect+2){ k.state="patrol"; k.t=2+Math.random()*2; k.vx=k.vy=0; }
+    } else if(k.state==="charge"){
+      k.t-=dt;
+      const ang=Math.atan2(player.y-k.y, player.x-k.x);
+      k.vx=Math.cos(ang)*T.speed; k.vy=Math.sin(ang)*T.speed;
+      k.atkCd=Math.max(0,k.atkCd-dt);
+      if(pd<0.75 && player.hurtT<=0 && k.atkCd<=0){
+        const dmg=Math.max(1, T.dmg-statDefense());
+        player.hp-=dmg; player.hurtT=1.2;
+        const ps2=toScreen(player.x,player.y);
+        floats.push({sx:ps2.x, sy:ps2.y-26, t:1.2, str:`-${dmg} PV`, c:"#c0473f"});
+        burst(ps2.x, ps2.y-10, "#c0473f", 8);
+        const kx=player.x+Math.cos(ang)*0.8, ky=player.y+Math.sin(ang)*0.8;
+        if(!isBlocked(kx,player.y)) player.x=kx;
+        if(!isBlocked(player.x,ky)) player.y=ky;
+        k.atkCd=2.5;
+        if(!raka.emerged){
+          raka.emerged=true; raka.visible=true;
+          spiritSay("raka","Je suis Raka. Méfie-toi de leurs griffes.", 5);
+        }
+        if(player.hp<=0){
+          player.hp=player.maxHp; player.hurtT=2.5;
+          player.x=spawn.x; player.y=spawn.y;
+          const ps3=toScreen(spawn.x,spawn.y);
+          floats.push({sx:ps3.x, sy:ps3.y-30, t:2.2, str:"Assommé ! Retour au camp…", c:"#8a3030"});
+          for(const kk of kobolds) if(kk.state==="charge"){ kk.state="patrol"; kk.t=2; kk.vx=kk.vy=0; }
+        }
+        if(elInv.classList.contains("open")) refreshUI();
+      }
+      if(k.t<=0 || pd>T.detect+4){ k.state="patrol"; k.t=2+Math.random()*3; k.vx=k.vy=0; }
+    } else {
+      k.t-=dt; k.atkCd=Math.max(0,k.atkCd-dt);
+      if(k.t<=0){
+        const ang=Math.random()*6.28;
+        k.patrolTx=k.x+Math.cos(ang)*3+Math.random()*2;
+        k.patrolTy=k.y+Math.sin(ang)*3+Math.random()*2;
+        k.t=2+Math.random()*3;
+      }
+      const ddx=k.patrolTx-k.x, ddy=k.patrolTy-k.y, d2=Math.hypot(ddx,ddy);
+      if(d2>0.2){ k.vx=(ddx/d2)*T.speed*0.4; k.vy=(ddy/d2)*T.speed*0.4; }
+      else { k.vx=0; k.vy=0; }
+    }
+    if(k.vx||k.vy){
+      const nx2=k.x+k.vx*dt, ny2=k.y+k.vy*dt;
+      if(!isBlocked(nx2,k.y)) k.x=nx2; else k.vx*=-0.5;
+      if(!isBlocked(k.x,ny2)) k.y=ny2; else k.vy*=-0.5;
+      k.animT+=dt;
+      const sdx=k.vx-k.vy; if(Math.abs(sdx)>0.05) k.flip=sdx<0;
+    }
+  }
+
+  // respawn kobolds (hors boucle pour éviter splice pendant for..of)
+  for(let i=kobolds.length-1;i>=0;i--){
+    if(kobolds[i].dead && kobolds[i].respawn<=0){ const tp=kobolds[i].type; kobolds.splice(i,1); spawnKobold(tp); }
+  }
+
+  // esprits de la nature
+  {
+    // Ao suit le joueur en orbite douce
+    if(ao.visible){
+      const targX=player.x+Math.cos(t*0.7)*1.9, targY=player.y+Math.sin(t*0.5)*1.2-0.6;
+      ao.x+=(targX-ao.x)*Math.min(1,dt*2.5);
+      ao.y+=(targY-ao.y)*Math.min(1,dt*2.5);
+      ao.ph+=dt;
+      if(Math.random()<dt*10){ const sp=toScreen(ao.x,ao.y); ao.trail.push({sx:sp.x,sy:sp.y-18,t:0.7,maxT:0.7}); }
+      ao.cooldown-=dt; ao.talkTimer-=dt;
+      if(ao.cooldown<=0 && ao.talkTimer<=0 && !spiritBubbles.some(b=>b.speaker==="ao")){
+        if(!ao.seenBois && countItem("bois")<1){
+          spiritSay("ao","Coupe un arbre. Le bois est la base de tout craft.",5); ao.seenBois=true; ao.cooldown=25;
+        } else if(!ao.seenPlanche && countItem("bois")>=2 && countItem("planche")<1){
+          spiritSay("ao","Tu as du bois ! Ouvre l'inventaire (I) et fabrique des planches.",5); ao.seenPlanche=true; ao.cooldown=20;
+        } else if(!ao.seenFeu && countItem("planche")>=2 && countItem("pierre")>=2){
+          spiritSay("ao","Planches et pierre — tu peux crafter un feu de camp. Pose-le avec F.",5); ao.seenFeu=true; ao.cooldown=20;
+        } else if(player.hp<=player.maxHp*0.4){
+          spiritSay("ao","Tu es blessé. Mange un fruit pour récupérer.",4); ao.cooldown=15;
+        } else if(kobolds.some(k=>!k.dead && Math.hypot(k.x-player.x,k.y-player.y)<10)){
+          spiritSay("ao","Des kobolds rôdent dans cette direction.",4); ao.cooldown=18;
+        }
+        if(ao.cooldown>0) ao.talkTimer=ao.cooldown+10;
+      }
+    }
+    for(let i=ao.trail.length-1;i>=0;i--){ ao.trail[i].t-=dt; if(ao.trail[i].t<=0) ao.trail.splice(i,1); }
+
+    // Raka : radar kobold, se positionne entre joueur et danger
+    if(raka.visible){
+      raka.ph+=dt*1.4;
+      let nearestK=null, nearestDist=999;
+      for(const k of kobolds){ if(k.dead) continue; const d2=Math.hypot(k.x-player.x,k.y-player.y); if(d2<nearestDist){nearestDist=d2;nearestK=k;} }
+      if(nearestK && nearestDist<14){
+        const ang=Math.atan2(nearestK.y-player.y, nearestK.x-player.x);
+        raka.targetX=player.x+Math.cos(ang)*2.5; raka.targetY=player.y+Math.sin(ang)*2.5;
+        if(nearestDist<5 && raka.cooldown<=0 && !spiritBubbles.some(b=>b.speaker==="raka")){
+          spiritSay("raka", nearestDist<3?"Attention ! Il est sur toi !":"Un kobold à portée. Garde tes distances.",3);
+          raka.cooldown=9;
+        }
+      } else {
+        raka.targetX=player.x-2.5; raka.targetY=player.y-2.5;
+      }
+      raka.x+=(raka.targetX-raka.x)*Math.min(1,dt*3);
+      raka.y+=(raka.targetY-raka.y)*Math.min(1,dt*3);
+      raka.cooldown=Math.max(0,raka.cooldown-dt);
+      if(Math.random()<dt*9){ const sp=toScreen(raka.x,raka.y); raka.trail.push({sx:sp.x,sy:sp.y-15,t:0.5,maxT:0.5}); }
+    }
+    for(let i=raka.trail.length-1;i>=0;i--){ raka.trail[i].t-=dt; if(raka.trail[i].t<=0) raka.trail.splice(i,1); }
+    for(let i=spiritBubbles.length-1;i>=0;i--){ spiritBubbles[i].t-=dt; if(spiritBubbles[i].t<=0) spiritBubbles.splice(i,1); }
+  }
+
   // ramassage des objets au sol
   for(let i=groundItems.length-1;i>=0;i--){
     const g = groundItems[i];
@@ -1558,6 +1896,7 @@ function loop(now){
   ents.push({depth:player.x+player.y, d:{type:"hero"}});
   for(const g of groundItems) if(vis(g.x,g.y)) ents.push({depth:g.x+g.y+0.005, d:{type:"gitem", g}});
   for(const a of animals) if(!a.dead && vis(a.x,a.y)) ents.push({depth:a.x+a.y, d:{type:"animal", a}});
+  for(const k of kobolds) if(!k.dead && vis(k.x,k.y)) ents.push({depth:k.x+k.y+0.002, d:{type:"kobold", k}});
   for(const b of butterflies) if(vis(b.x,b.y)) ents.push({depth:b.x+b.y+0.01, d:{type:"bf", b}});
   ents.sort((a,b)=>a.depth-b.depth);
 
@@ -1594,6 +1933,23 @@ function loop(now){
       if(a.hurtT>0 && Math.floor(t*16)%2) cx.globalAlpha=0.45;
       cx.drawImage(img, -Math.round(img.width/2), -img.height+2);
       cx.restore();
+    } else if(d.type==="kobold"){
+      const k=d.k, TK=KOBOLD_TYPES[k.type];
+      const s=toScreen(k.x,k.y);
+      const img=KOBOLD_IMG[k.type][(k.vx||k.vy)?Math.floor(k.animT*10)%2:0];
+      const kxp=Math.round(s.x+ox), kyp=Math.round(s.y+oy);
+      cx.fillStyle="rgba(10,5,20,0.35)";
+      cx.beginPath(); cx.ellipse(kxp, kyp+1, img.width/2, 2.5, 0, 0, 7); cx.fill();
+      cx.save(); cx.translate(kxp, kyp);
+      if(k.flip) cx.scale(-1,1);
+      if(k.hurtT>0 && Math.floor(t*16)%2) cx.globalAlpha=0.4;
+      cx.drawImage(img, -Math.round(img.width/2), -img.height+2);
+      cx.restore();
+      // barre de vie
+      const hpFrac=k.hp/TK.hp, bw=img.width+4;
+      cx.fillStyle="rgba(0,0,0,0.55)"; cx.fillRect(kxp-bw/2-1, kyp-TK.h-3, bw+2, 4);
+      cx.fillStyle=hpFrac>0.5?"#5db858":hpFrac>0.25?"#e8a030":"#c0473f";
+      cx.fillRect(kxp-bw/2, kyp-TK.h-2, Math.max(0,Math.round(bw*hpFrac)), 2);
     } else {
       const s = toScreen(d.tx+0.5, d.ty+0.5);
       const shk = d.shake>0 ? Math.round(Math.sin(d.shake*40)*1.5) : 0;
@@ -1661,6 +2017,66 @@ function loop(now){
     cx.fillStyle = p.c;
     cx.fillRect(Math.round(p.sx+ox), Math.round(p.sy+oy), 2, 2);
   }
+
+  // esprits (rendu additif, au-dessus de tout)
+  cx.save(); cx.globalCompositeOperation="lighter";
+  if(ao.visible){
+    for(const pt of ao.trail){
+      cx.globalAlpha=pt.t/pt.maxT*0.55;
+      cx.fillStyle="#39d353"; cx.fillRect(Math.round(pt.sx+ox)-1, Math.round(pt.sy+oy)-1, 2, 2);
+    }
+    const sp=toScreen(ao.x,ao.y), axp=Math.round(sp.x+ox), ayp=Math.round(sp.y+oy-18);
+    const pulse=0.75+0.25*Math.sin(t*3+ao.ph);
+    cx.globalAlpha=pulse; cx.drawImage(SPIRIT_GLOW_AO, axp-18, ayp-18);
+  }
+  if(raka.visible){
+    for(const pt of raka.trail){
+      cx.globalAlpha=pt.t/pt.maxT*0.45;
+      cx.fillStyle="#c0473f"; cx.fillRect(Math.round(pt.sx+ox)-1, Math.round(pt.sy+oy)-1, 2, 2);
+    }
+    const sp=toScreen(raka.x,raka.y), rxp=Math.round(sp.x+ox), ryp=Math.round(sp.y+oy-16);
+    const nearKob=kobolds.some(k=>!k.dead&&Math.hypot(k.x-player.x,k.y-player.y)<5);
+    const pulse=nearKob?0.65+0.35*Math.sin(t*8):0.6+0.2*Math.sin(t*2+raka.ph);
+    cx.globalAlpha=pulse; cx.drawImage(SPIRIT_GLOW_RAKA, rxp-18, ryp-18);
+  }
+  cx.restore(); cx.globalAlpha=1;
+  // noyaux des esprits
+  if(ao.visible){
+    const sp=toScreen(ao.x,ao.y), axp=Math.round(sp.x+ox), ayp=Math.round(sp.y+oy-18);
+    cx.fillStyle="#c0ffc8"; cx.fillRect(axp-1,ayp-1,3,3);
+    cx.fillStyle="#ffffff"; cx.fillRect(axp,ayp-1,1,1);
+  }
+  if(raka.visible){
+    const sp=toScreen(raka.x,raka.y), rxp=Math.round(sp.x+ox), ryp=Math.round(sp.y+oy-16);
+    cx.fillStyle="#ffb0a0"; cx.fillRect(rxp-1,ryp-1,3,3);
+    cx.fillStyle="#ffffff"; cx.fillRect(rxp,ryp-1,1,1);
+  }
+  // bulles de dialogue des esprits
+  for(const b of spiritBubbles){
+    const spirit = b.speaker==="ao" ? ao : raka;
+    const sp=toScreen(spirit.x,spirit.y);
+    const bxp=Math.round(sp.x+ox), byp=Math.round(sp.y+oy-(b.speaker==="ao"?34:30));
+    const alpha=Math.min(1, b.t/0.5);
+    const lines=wrapText(b.msg, 24);
+    const bh=lines.length*10+8;
+    const bw=Math.max(...lines.map(l=>l.length*5.5))+12;
+    const bgC=b.speaker==="ao"?"rgba(15,40,18,0.92)":"rgba(45,10,8,0.92)";
+    const borderC=b.speaker==="ao"?"#39d353":"#c0473f";
+    const textC=b.speaker==="ao"?"#a0ffb0":"#ffb0a0";
+    cx.save(); cx.globalAlpha=alpha;
+    cx.fillStyle=bgC;
+    roundRect(cx, bxp-bw/2, byp-bh, bw, bh, 4); cx.fill();
+    cx.strokeStyle=borderC; cx.lineWidth=1;
+    roundRect(cx, bxp-bw/2, byp-bh, bw, bh, 4); cx.stroke();
+    cx.fillStyle=bgC;
+    cx.beginPath(); cx.moveTo(bxp-3,byp); cx.lineTo(bxp+3,byp); cx.lineTo(bxp,byp+5); cx.closePath(); cx.fill();
+    cx.strokeStyle=borderC; cx.lineWidth=1;
+    cx.beginPath(); cx.moveTo(bxp-3,byp); cx.lineTo(bxp,byp+5); cx.lineTo(bxp+3,byp); cx.stroke();
+    cx.font="bold 7px 'Courier New', monospace"; cx.textAlign="left"; cx.fillStyle=textC;
+    lines.forEach((line,i)=>{ cx.fillText(line, bxp-bw/2+5, byp-bh+9+i*10); });
+    cx.restore();
+  }
+  cx.textAlign="center";
 
   /* ---- ambiance : lumière & météo ---- */
   // rayons de soleil obliques en plein jour
