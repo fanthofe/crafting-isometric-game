@@ -381,7 +381,8 @@ function loop(now){
     cx.lineWidth = 1; cx.stroke();
     cx.restore();
   } else if(target){
-    const s = toScreen(target.a.x, target.a.y);
+    const tEnt = target.a || target.k;   // animal ou kobold : même surbrillance
+    const s = toScreen(tEnt.x, tEnt.y);
     cx.beginPath(); cx.ellipse(Math.round(s.x+ox), Math.round(s.y+oy)+1, 8, 3.5, 0, 0, 7);
     cx.strokeStyle = `rgba(255,180,150,${0.6+0.3*Math.sin(t*6)})`;
     cx.lineWidth = 1; cx.stroke();
@@ -400,6 +401,22 @@ function loop(now){
   for(const k of kobolds) if(!k.dead && vis(k.x,k.y)) ents.push({depth:k.x+k.y+0.002, d:{type:"kobold", k}});
   for(const b of butterflies) if(vis(b.x,b.y)) ents.push({depth:b.x+b.y+0.01, d:{type:"bf", b}});
   ents.sort((a,b)=>a.depth-b.depth);
+
+  // boîtes écran des éléments « cachables » : un arbre qui en recouvre un (en passant
+  // devant) devient translucide. Profondeur = x+y (plus petite = dessiné avant = derrière).
+  const occludees = [{depth:player.x+player.y, x:ps.x+ox, y:ps.y+oy, hw:6, h:18}];
+  for(const a of animals) if(!a.dead && vis(a.x,a.y)){
+    const s=toScreen(a.x,a.y), im=ANIMAL_IMG[a.type][0];
+    occludees.push({depth:a.x+a.y, x:s.x+ox, y:s.y+oy, hw:im.width/2, h:im.height});
+  }
+  for(const k of kobolds) if(!k.dead && vis(k.x,k.y)){
+    const s=toScreen(k.x,k.y), im=KOBOLD_IMG[k.type][0];
+    occludees.push({depth:k.x+k.y+0.002, x:s.x+ox, y:s.y+oy, hw:im.width/2, h:im.height});
+  }
+  for(const r of decor) if(r.type==="rock" && r.alive && vis(r.tx+0.5,r.ty+0.5)){
+    const s=toScreen(r.tx+0.5,r.ty+0.5);
+    occludees.push({depth:r.tx+r.ty, x:s.x+ox, y:s.y+oy, hw:11, h:11});
+  }
 
   for(const e of ents){
     const d = e.d;
@@ -455,6 +472,20 @@ function loop(now){
       const s = toScreen(d.tx+0.5, d.ty+0.5);
       const shk = d.shake>0 ? Math.round(Math.sin(d.shake*40)*1.5) : 0;
       const bx = s.x+ox+shk, by = s.y+oy;
+      // un arbre devient translucide uniquement s'il masque un élément situé derrière lui
+      if((d.type==="tree" && d.alive) || d.type==="fruittree"){
+        const td = d.tx+d.ty;
+        const tx0=bx-18, tx1=bx+18, ty0=by-46, ty1=by+2;
+        let hides = false;
+        for(const o of occludees){
+          if(o.depth>=td) continue;                          // pas derrière l'arbre
+          if(o.x-o.hw<tx1 && o.x+o.hw>tx0 && o.y-o.h<ty1 && o.y+2>ty0){ hides=true; break; }
+        }
+        const target = hides ? TREE_FADE_MIN : 1;
+        if(d.fadeA===undefined) d.fadeA = target;
+        d.fadeA += (target-d.fadeA)*Math.min(1, dt*TREE_FADE_SPEED);
+        cx.globalAlpha = d.fadeA;
+      }
       if(d.type==="tree"){
         if(d.alive) cx.drawImage(TREE_IMG[d.v], Math.round(bx-20), Math.round(by-46));
         else cx.drawImage(STUMP, Math.round(bx-8), Math.round(by-8));
@@ -510,6 +541,7 @@ function loop(now){
         cx.fillRect(fx-2+sw, fy-4, 1, 4);
         cx.fillRect(fx+2+sw, fy-4, 1, 4);
       }
+      cx.globalAlpha = 1;   // on rétablit l'opacité après un éventuel fondu d'arbre
     }
   }
 

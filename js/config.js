@@ -9,6 +9,10 @@ const SPEED = 3.4;
 const REACH = 1.35;          // portée de l'action
 const SWING_TIME = 0.3;      // durée d'un coup
 
+// Transparence d'un arbre qui masque un élément situé derrière lui
+const TREE_FADE_MIN = 0.6;   // opacité quand l'arbre cache quelque chose (reste visible)
+const TREE_FADE_SPEED = 9;   // vitesse de transition opaque <-> translucide
+
 const cv = document.getElementById("game");
 const cx = cv.getContext("2d");
 cv.width = LW; cv.height = LH;
