@@ -13,6 +13,12 @@ const SWING_TIME = 0.3;      // durée d'un coup
 const TREE_FADE_MIN = 0.6;   // opacité quand l'arbre cache quelque chose (reste visible)
 const TREE_FADE_SPEED = 9;   // vitesse de transition opaque <-> translucide
 
+// Combat tour par tour
+const TRIGGER_RADIUS = 2.2;     // distance (tuiles) d'un kobold qui déclenche le combat
+const BATTLE_ZONE_MARGIN = 30;  // marge (px) du cercle de combat autour des combattants
+const BATTLE_DARK = 0.62;       // opacité max de la pénombre extérieure (style Wakfu)
+const BATTLE_ZONE_FADE = 3;     // vitesse du fondu d'apparition/disparition de la zone
+
 const cv = document.getElementById("game");
 const cx = cv.getContext("2d");
 cv.width = LW; cv.height = LH;

@@ -8,25 +8,29 @@ function loop(now){
   const t = now/1000;
 
   /* ---- mise à jour ---- */
-  let sx = (keys.right?1:0)-(keys.left?1:0);
-  let sy = (keys.down?1:0)-(keys.up?1:0);
-  if(player.swing>0){ sx=0; sy=0; }      // réaliser une action fige le personnage
-  player.walking = (sx!==0||sy!==0);
-  if(player.walking){
-    if(sy>0) player.dir="down"; else if(sy<0) player.dir="up";
-    if(sx<0) player.dir="left"; else if(sx>0) player.dir="right";
-    let dx = (sx+sy), dy = (sy-sx);
-    const len = Math.hypot(dx,dy)||1; dx/=len; dy/=len;
-    const spd = SPEED * (overweight()?0.5:1) * (boostT>0?1.3:1) * (equip.pieds?1.15:1);
-    const nx = player.x + dx*spd*dt;
-    const ny = player.y + dy*spd*dt;
-    if(!isBlocked(nx, player.y)) player.x = nx;
-    if(!isBlocked(player.x, ny)) player.y = ny;
-    player.animT += dt;
-  } else player.animT = 0;
+  if(gameMode==="battle") updateBattle(dt, t);
+
+  if(gameMode==="explore"){
+    let sx = (keys.right?1:0)-(keys.left?1:0);
+    let sy = (keys.down?1:0)-(keys.up?1:0);
+    if(player.swing>0){ sx=0; sy=0; }      // réaliser une action fige le personnage
+    player.walking = (sx!==0||sy!==0);
+    if(player.walking){
+      if(sy>0) player.dir="down"; else if(sy<0) player.dir="up";
+      if(sx<0) player.dir="left"; else if(sx>0) player.dir="right";
+      let dx = (sx+sy), dy = (sy-sx);
+      const len = Math.hypot(dx,dy)||1; dx/=len; dy/=len;
+      const spd = SPEED * (overweight()?0.5:1) * (boostT>0?1.3:1) * (equip.pieds?1.15:1);
+      const nx = player.x + dx*spd*dt;
+      const ny = player.y + dy*spd*dt;
+      if(!isBlocked(nx, player.y)) player.x = nx;
+      if(!isBlocked(player.x, ny)) player.y = ny;
+      player.animT += dt;
+    } else player.animT = 0;
+  }
   const frame = Math.floor(player.animT*8)%4;
 
-  if(actionQueued){ actionQueued=false; doAction(); }
+  if(actionQueued){ actionQueued=false; if(gameMode==="explore") doAction(); }
   if(player.swing>0) player.swing = Math.max(0, player.swing-dt);
   if(boostT>0) boostT = Math.max(0, boostT-dt);
   if(player.hurtT>0) player.hurtT = Math.max(0, player.hurtT-dt);
@@ -58,8 +62,8 @@ function loop(now){
       }
     }
   }
-  // animaux : errance, fuite, réapparition
-  for(const a of animals){
+  // animaux : errance, fuite, réapparition (figés pendant un combat)
+  if(gameMode==="explore") for(const a of animals){
     if(a.hurtT>0) a.hurtT = Math.max(0, a.hurtT-dt);
     if(a.dead){ a.respawn-=dt; if(a.respawn<=0) resetAnimal(a); continue; }
     const T = ANIMAL_TYPES[a.type];
@@ -122,8 +126,8 @@ function loop(now){
       if(Math.abs(sdx)>0.05) a.flip = sdx<0;
     }
   }
-  // kobolds : patrouille, détection, charge, fuite
-  for(const k of kobolds){
+  // kobolds : patrouille, détection, charge, fuite (figés pendant un combat)
+  if(gameMode==="explore") for(const k of kobolds){
     if(k.hurtT>0) k.hurtT=Math.max(0,k.hurtT-dt);
     if(k.alertT>0) k.alertT-=dt;
     if(k.dead){ k.respawn-=dt; continue; }
@@ -196,9 +200,15 @@ function loop(now){
     }
   }
 
-  // respawn kobolds (hors boucle pour éviter splice pendant for..of)
-  for(let i=kobolds.length-1;i>=0;i--){
+  // respawn kobolds (hors boucle pour éviter splice pendant for..of ; suspendu en combat)
+  if(gameMode==="explore") for(let i=kobolds.length-1;i>=0;i--){
     if(kobolds[i].dead && kobolds[i].respawn<=0){ const tp=kobolds[i].type; kobolds.splice(i,1); spawnKobold(tp); }
+  }
+
+  // déclenchement automatique du combat à l'approche d'un kobold
+  if(gameMode==="explore"){
+    if(player.battleCD>0) player.battleCD-=dt;
+    else { const grp=battleTriggerGroup(); if(grp) startBattle(grp); }
   }
 
   // esprits de la nature
@@ -317,9 +327,15 @@ function loop(now){
   const lbl = `${light>0.65?"☀ jour":light>0.15?(dayPhase()<0.6?"🌇 crépuscule":"🌄 aube"):"🌙 nuit"} · ${weather==="soleil"?"ciel dégagé":weather}`;
   if(elMeteo.textContent!==lbl) elMeteo.textContent = lbl;
 
-  // caméra
+  // caméra (centrée sur la zone de combat le cas échéant, sinon sur le joueur)
   const ps = toScreen(player.x, player.y);
-  const targX = ps.x - LW/2, targY = ps.y - LH/2 - 8;
+  let targX, targY;
+  if(gameMode==="battle" && battle.anchor){
+    const ac = toScreen(battle.anchor.x, battle.anchor.y);
+    targX = ac.x - LW/2; targY = ac.y - LH/2 - 8;
+  } else {
+    targX = ps.x - LW/2; targY = ps.y - LH/2 - 8;
+  }
   if(!camInit){ camX=targX; camY=targY; camInit=true; }
   camX += (targX-camX)*Math.min(1, dt*6);
   camY += (targY-camY)*Math.min(1, dt*6);
@@ -370,8 +386,8 @@ function loop(now){
     cx.drawImage(g===3 ? WATER[wf] : g===4 ? SAND : GRASS[g], dx, dy);
   }
 
-  // surbrillance de la cible à portée
-  const target = nearestTarget();
+  // surbrillance de la cible à portée (désactivée pendant un combat)
+  const target = gameMode==="explore" ? nearestTarget() : null;
   if(target && target.kind==="decor"){
     const s = toScreen(target.d.tx, target.d.ty);
     cx.save();
@@ -697,6 +713,9 @@ function loop(now){
     const img = seg>=2 ? HEARTS.full : seg>=1 ? HEARTS.half : HEARTS.empty;
     cx.drawImage(img, 6+i*10, 6);
   }
+
+  // superposition de la scène de combat (zone éclairée façon Wakfu + UI)
+  if(gameMode!=="explore") renderBattle(t, ox, oy);
 
   requestAnimationFrame(loop);
 }

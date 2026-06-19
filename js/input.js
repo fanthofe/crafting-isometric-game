@@ -12,9 +12,10 @@ addEventListener("keydown", e=>{
   const d=KEYMAP[e.code];
   if(d){ keys[d]=true; e.preventDefault(); return; }
   if(e.code==="KeyE" || e.code==="Space"){ actionQueued=true; e.preventDefault(); }
-  if(e.code==="KeyI"){ toggleInv(); e.preventDefault(); }
-  if(e.code==="KeyF"){ placeFire(); e.preventDefault(); }
-  if(e.code==="Escape"){ toggleInv(false); }
+  // inventaire & feu de camp indisponibles pendant un combat (le menu de combat gère ces touches)
+  if(e.code==="KeyI"){ if(gameMode==="explore") toggleInv(); e.preventDefault(); }
+  if(e.code==="KeyF"){ if(gameMode==="explore") placeFire(); e.preventDefault(); }
+  if(e.code==="Escape"){ if(gameMode==="explore") toggleInv(false); }
 });
 addEventListener("keyup", e=>{ const d=KEYMAP[e.code]; if(d){ keys[d]=false; e.preventDefault(); } });
 document.querySelectorAll(".db[data-d]").forEach(b=>{
