@@ -114,6 +114,20 @@ const RECIPES = [
   {id:"poisson_grille",  label:"Poisson grillé",          cost:{poisson:2, charbon:1},              gives:{poisson_grille:1},  req:"marmite"},
   {id:"soupe_requin",    label:"Soupe de requin",         cost:{viande_requin:1, noix_coco:1},      gives:{soupe_requin:1},    req:"marmite"},
   {id:"elixir_fruit",    label:"Élixir polynésien",       cost:{peche:2, cerise:2, prune:1},        gives:{elixir_fruit:1},    req:"marmite"},
+
+  /* ── Cannes à pêche ── */
+  {id:"canne_bambou", label:"Canne en bambou",   cost:{bois:2, fibre_coco:1},              gives:{canne_bambou:1}},
+  {id:"canne_os",     label:"Canne en os",       cost:{bois:1, os:2, fibre_coco:2},        gives:{canne_os:1},     req:"etabli"},
+  {id:"canne_fer",    label:"Canne en fer",      cost:{planche:2, basalte:2, fibre_coco:3},gives:{canne_fer:1},    req:"etabli"},
+
+  /* ── Cuisine marine ── */
+  {id:"sashimi",        label:"Sashimi",              cost:{bec_de_cane:1, charbon:1},                       gives:{sashimi:1},        req:"marmite"},
+  {id:"soyo",           label:"Soyo",                 cost:{bec_de_cane:2, noix_coco:1, charbon:1},          gives:{soyo:1},           req:"marmite"},
+  {id:"huile_friture",  label:"Huile de friture",     cost:{huile_poisson:2, pierre:1},                      gives:{huile_friture:1}},
+  {id:"onction_kaimana",label:"Onction kaimana",      cost:{graisse_baleine:1, foie_requin:1},               gives:{onction_kaimana:1}},
+
+  /* ── Arme marine ── */
+  {id:"harpon", label:"Harpon de baleine", cost:{os_baleine:2, bois_dur:3, fibre_coco:2}, gives:{harpon:1}, req:"embarcadere"},
 ];
 
 function canCraft(r){ return Object.entries(r.cost).every(([k,n])=>countItem(k)>=n); }

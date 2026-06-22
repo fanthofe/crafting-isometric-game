@@ -174,4 +174,50 @@ const ITEMS = {
   vaa_balancier:{name:"Va'a à balancier", c:"#5a3a1a", stack:1, w:50, place:"bateau", boatTier:3},
   proa:         {name:"Proa micronésien", c:"#6b4a2d", stack:1, w:60, place:"bateau", boatTier:4},
   waka_taua:    {name:"Waka taua",        c:"#3a2a1a", stack:1, w:80, place:"bateau", boatTier:5},
+
+  /* ── Cannes à pêche ── */
+  canne_bambou: {name:"Canne en bambou",  c:"#c4b060", stack:1, w:1.0, fishZone:1, bonus:"Pêche dans le lagon"},
+  canne_os:     {name:"Canne en os",      c:"#ddd8c8", stack:1, w:1.5, fishZone:2, bonus:"Pêche lagon + récif · +15 % espèces rares"},
+  canne_fer:    {name:"Canne en fer",     c:"#8090a8", stack:1, w:2.0, fishZone:3, bonus:"Pêche toutes zones · +20 % espèces hauturières"},
+
+  /* ── Poissons bruts (pêche) ── */
+  bec_de_cane:       {name:"Bec de cane",       c:"#7aacbe", stack:8,  w:2.5, food:6,  heal:18},
+  communard:         {name:"Communard",          c:"#4a8fa0", stack:12, w:0.5, food:3,  heal:8},
+  picot:             {name:"Picot",              c:"#e8c840", stack:8,  w:1.2, food:4,  heal:10},
+  mulet:             {name:"Mulet",              c:"#8ab0c8", stack:8,  w:2.0, food:5,  heal:14},
+  poisson_crocodile: {name:"Poisson-crocodile",  c:"#6a7840", stack:6,  w:1.8, food:5,  heal:12},
+  loche:             {name:"Loche",              c:"#c87840", stack:6,  w:3.0, food:8,  heal:20},
+  napoleon:          {name:"Napoléon",           c:"#4060c8", stack:4,  w:8.0, food:10, heal:25},
+  poisson_perroquet: {name:"Poisson-perroquet",  c:"#40c8a0", stack:6,  w:2.5, food:6,  heal:12},
+  rascasse:          {name:"Rascasse",           c:"#c85028", stack:6,  w:1.5, food:5,  heal:14},
+  carangue:          {name:"Carangue",           c:"#a0b8c8", stack:6,  w:3.5, food:7,  heal:16},
+  thon_blanc:        {name:"Thon blanc",         c:"#d8e8f0", stack:4,  w:6.0, food:9,  heal:22},
+  thon_jaune:        {name:"Thon jaune",         c:"#f0d840", stack:4,  w:8.0, food:11, heal:28},
+  thon_obese:        {name:"Thon obèse",         c:"#4060a0", stack:3,  w:10.0,food:12, heal:30},
+  mahi_mahi:         {name:"Mahi-mahi",          c:"#40c060", stack:4,  w:5.0, food:10, heal:24},
+  tazar:             {name:"Tazar",              c:"#e0e8f8", stack:4,  w:4.0, food:8,  heal:20},
+  saumon_des_dieux:  {name:"Saumon des dieux",   c:"#c0c0d8", stack:2,  w:20.0,food:20, heal:50},
+
+  /* ── Drops et ressources marines ── */
+  foie_requin:        {name:"Foie de requin",      c:"#8a3030", stack:6,  w:1.5},
+  aileron_requin:     {name:"Aileron de requin",   c:"#6a8090", stack:4,  w:1.0},
+  cartilage_requin:   {name:"Cartilage de requin", c:"#e0e0d0", stack:6,  w:0.8},
+  sable_corail:       {name:"Sable de corail",     c:"#f0e0b8", stack:20, w:0.5},
+  ecaille_arc_en_ciel:{name:"Écaille arc-en-ciel", c:"#80f0d0", stack:10, w:0.2},
+  ecaille_argent:     {name:"Écaille d'argent",    c:"#d0d8e8", stack:5,  w:0.5},
+  huile_poisson:      {name:"Huile de poisson",    c:"#d8c878", stack:8,  w:0.8},
+  bec_espadon:        {name:"Bec d'espadon",       c:"#a0b0c0", stack:4,  w:2.0},
+  graisse_baleine:    {name:"Graisse de baleine",  c:"#f0e8d0", stack:4,  w:3.0},
+  os_baleine:         {name:"Os de baleine",       c:"#ece8de", stack:3,  w:5.0},
+  viande_espadon:     {name:"Viande d'espadon",    c:"#e8d0c0", stack:6,  w:3.0, food:8, heal:22},
+  parchemin_baleine:  {name:"Parchemin baleine",   c:"#e8e0c8", stack:1,  w:0.1},
+
+  /* ── Préparations marines ── */
+  sashimi:         {name:"Sashimi",          c:"#f0c090", stack:5, w:1,   food:120, heal:20},
+  soyo:            {name:"Soyo",             c:"#80c0e0", stack:5, w:1,   food:180, heal:35},
+  onction_kaimana: {name:"Onction kaimana",  c:"#80d0b0", stack:3, w:0.5, potion:"onction"},
+  huile_friture:   {name:"Huile de friture", c:"#d8c040", stack:5, w:1.0},
+
+  /* ── Arme marine ── */
+  harpon: {name:"Harpon de baleine", c:"#ece8de", stack:1, w:3.0, equip:"arme", def:0, dmg:6, bonus:"6 dégâts · portée +1 · dégâts ×2 en mer"},
 };

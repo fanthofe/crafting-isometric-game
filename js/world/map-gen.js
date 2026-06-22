@@ -26,5 +26,25 @@ for(let i=0;i<4;i++){
   }
 }
 
+// Zone océanique par tuile : 0=non-eau/lac, 1=lagon, 2=récif, 3=haute_mer
+const waterZone = [];
+for(let y=0;y<MAP;y++) waterZone.push(new Array(MAP).fill(0));
+{
+  const LAGON_W = 6, RECIF_W_BASE = 7;
+  for(let y=0;y<MAP;y++) for(let x=0;x<MAP;x++){
+    if(ground[y][x] !== 3) continue;
+    const dx2=(x-MAP/2+0.5)/(MAP/2), dy2=(y-MAP/2+0.5)/(MAP/2);
+    const dist = Math.hypot(dx2,dy2);
+    const ang  = Math.atan2(dy2,dx2);
+    const r    = islandR(ang);
+    const distToShore = (dist - r) * (MAP/2);
+    if(distToShore <= 0) continue; // lac intérieur
+    const reefW = RECIF_W_BASE * (0.65 + 0.35 * Math.abs(Math.sin(ang*2.5 + phA)));
+    if(distToShore <= LAGON_W)         waterZone[y][x] = 1;
+    else if(distToShore <= LAGON_W + reefW) waterZone[y][x] = 2;
+    else                               waterZone[y][x] = 3;
+  }
+}
+
 const decor = [];
 const spawn = {x:MAP/2+0.5, y:MAP/2+0.5};

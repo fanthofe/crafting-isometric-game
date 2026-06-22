@@ -75,3 +75,35 @@ const ANIMAL_IMG = {
     else  { g.fillRect(2,4,3,1); g.fillRect(6,4,3,1); }
   }),
 };
+
+/* Sprites des prédateurs marins.
+   Tous les requins réutilisent ANIMAL_IMG.requin.
+   Orque et espadon ont leur propre sprite. */
+const SEA_PREDATOR_IMG = {};
+// requins → sprite requin existant
+["requin_bouledogue","requin_tigre","requin_gris",
+ "requin_pointes_noires","requin_dorsale","requin_blanc"].forEach(k=>{
+  SEA_PREDATOR_IMG[k] = ANIMAL_IMG.requin;
+});
+// orque — noir et blanc, plus large
+SEA_PREDATOR_IMG.orque = frames2(20,10,(g,f)=>{
+  g.fillStyle="#1a1a1a"; g.fillRect(0,3,17,4); g.fillRect(16,3,3,3);
+  g.fillStyle="#e8e8e8"; g.fillRect(0,4,4,2); g.fillRect(5,4,4,2);
+  g.fillStyle="#2b2b2b"; g.fillRect(17,4,1,1);
+  g.fillStyle="#1a1a1a"; g.fillRect(8,0,3,3); g.fillRect(7,1,1,2); g.fillRect(11,1,1,2);
+  g.fillStyle="#1a1a1a";
+  if(f){ g.fillRect(17,2,3,2); g.fillRect(17,6,3,2); }
+  else  { g.fillRect(18,2,2,2); g.fillRect(18,6,2,2); }
+});
+// espadon — argenté avec bec long
+SEA_PREDATOR_IMG.espadon = frames2(22,8,(g,f)=>{
+  g.fillStyle="#8090a0"; g.fillRect(4,2,15,4); g.fillRect(18,3,4,2);
+  g.fillStyle="#c0d0e0"; g.fillRect(5,3,9,1);
+  g.fillStyle="#5a6a7a"; g.fillRect(19,3,1,1);
+  g.fillStyle="#8090a0"; g.fillRect(10,0,3,2); g.fillRect(9,1,1,1); g.fillRect(13,1,1,1);
+  // bec
+  g.fillStyle="#a0b0c0"; g.fillRect(0,3,4,2); g.fillRect(0,3,1,1);
+  g.fillStyle="#8090a0";
+  if(f){ g.fillRect(19,2,3,2); g.fillRect(19,5,3,2); }
+  else  { g.fillRect(20,2,2,2); g.fillRect(20,5,2,2); }
+});

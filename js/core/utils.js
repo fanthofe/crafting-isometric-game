@@ -13,5 +13,7 @@ function toScreen(tx,ty){ return { x:(tx-ty)*(TW/2), y:(tx+ty)*(TH/2) }; }
 function isBlocked(tx,ty){
   if(tx<0.3||ty<0.3||tx>MAP-0.3||ty>MAP-0.3) return true;
   const ix=Math.floor(tx), iy=Math.floor(ty);
+  // En bateau, les tuiles d'eau sont franchissables
+  if(typeof player!=="undefined" && player.boat && ground[iy]?.[ix]===3) return false;
   return blocked[iy]?.[ix] ?? true;
 }

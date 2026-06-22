@@ -2,7 +2,7 @@
 /* État du joueur et stats calculées. */
 
 const player = {x:spawn.x, y:spawn.y, dir:"down", walking:false, animT:0, swing:0,
-                hp:10, maxHp:10, hurtT:0};
+                hp:10, maxHp:10, hurtT:0, battleCD:0, boat:null, _wasOnWater:false};
 let camX=0, camY=0, camInit=false;
 
 function statForce(){

@@ -21,13 +21,27 @@ function loop(now){
       if(sx<0) player.dir="left"; else if(sx>0) player.dir="right";
       let dx = (sx+sy), dy = (sy-sx);
       const len = Math.hypot(dx,dy)||1; dx/=len; dy/=len;
-      const spd = SPEED * (overweight()?0.5:1) * (boostT>0?1.3:1) * (equip.pieds?1.15:1);
+      const boatMult = player.boat ? (BOAT_STATS[player.boat]?.speed ?? 1) : 1;
+      const spd = SPEED * (overweight()?0.5:1) * (boostT>0?1.3:1) * (equip.pieds?1.15:1) * boatMult;
       const nx = player.x + dx*spd*dt;
       const ny = player.y + dy*spd*dt;
       if(!isBlocked(nx, player.y)) player.x = nx;
       if(!isBlocked(player.x, ny)) player.y = ny;
       player.animT += dt;
+      // Annule la pêche si le joueur bouge en mer
+      if(player.boat && fishing.state && fishing.state !== "bite") cancelFishing();
     } else player.animT = 0;
+  }
+  // Débarquement automatique en atteignant la terre
+  if(player.boat){
+    const tileG = ground[Math.floor(player.y)]?.[Math.floor(player.x)];
+    if(tileG === 3) player._wasOnWater = true;
+    else if(player._wasOnWater){
+      const ps4 = toScreen(player.x, player.y);
+      floats.push({sx:ps4.x, sy:ps4.y-22, t:1.2, str:"Débarqué", c:"#4a8fa0"});
+      player.boat = null; player._wasOnWater = false;
+      cancelFishing();
+    }
   }
   const frame = Math.floor(player.animT*8)%4;
 
@@ -35,6 +49,9 @@ function loop(now){
   if(player.swing>0) player.swing = Math.max(0, player.swing-dt);
   if(boostT>0) boostT = Math.max(0, boostT-dt);
   if(player.hurtT>0) player.hurtT = Math.max(0, player.hurtT-dt);
+
+  // pêche
+  if(gameMode==="explore" && player.boat) updateFishing(dt);
 
   // repousse des arbres / rochers / fruits
   for(const d of decor){
@@ -216,6 +233,61 @@ function loop(now){
   // respawn kobolds (hors boucle pour éviter splice pendant for..of ; suspendu en combat)
   if(gameMode==="explore") for(let i=kobolds.length-1;i>=0;i--){
     if(kobolds[i].dead && kobolds[i].respawn<=0){ const tp=kobolds[i].type; kobolds.splice(i,1); spawnKobold(tp); }
+  }
+
+  // prédateurs marins
+  if(gameMode==="explore") for(const sp of seaPredators){
+    if(sp.hurtT>0) sp.hurtT = Math.max(0, sp.hurtT-dt);
+    if(sp.dead){ sp.respawn-=dt; continue; }
+    const T = SEA_PREDATOR_TYPES[sp.type];
+    const pd = Math.hypot(player.x-sp.x, player.y-sp.y);
+    if(sp.atkCd>0) sp.atkCd-=dt;
+    const playerOnWater = ground[Math.floor(player.y)]?.[Math.floor(player.x)]===3;
+    if(T.aggressive && playerOnWater && pd<T.detect && sp.state==="idle"){ sp.state="charge"; sp.t=5; }
+    if(sp.state==="charge"){
+      sp.t-=dt;
+      const ang = Math.atan2(player.y-sp.y, player.x-sp.x);
+      sp.vx=Math.cos(ang)*T.speed; sp.vy=Math.sin(ang)*T.speed;
+      if(playerOnWater && pd<0.8 && player.hurtT<=0 && sp.atkCd<=0){
+        const dmg = Math.max(1, T.dmg-statDefense());
+        player.hp-=dmg; player.hurtT=1.2;
+        const ps2=toScreen(player.x,player.y);
+        floats.push({sx:ps2.x, sy:ps2.y-26, t:1.2, str:`-${dmg} PV`, c:"#4a6878"});
+        burst(ps2.x, ps2.y-10, "#4a6878", 8);
+        sp.atkCd=2.5;
+        if(player.hp<=0){
+          player.hp=player.maxHp; player.hurtT=2.5;
+          player.x=spawn.x; player.y=spawn.y;
+          player.boat=null; player._wasOnWater=false; cancelFishing();
+          const ps3=toScreen(spawn.x,spawn.y);
+          floats.push({sx:ps3.x, sy:ps3.y-30, t:2.2, str:"Attaqué en mer ! Retour au camp…", c:"#8a3030"});
+          for(const s2 of seaPredators) if(s2.state==="charge"){ s2.state="idle"; s2.t=2; s2.vx=s2.vy=0; }
+        }
+        if(elInv.classList.contains("open")) refreshUI();
+      }
+      if(sp.t<=0||pd>T.detect+4||!playerOnWater){ sp.state="idle"; sp.t=2+Math.random()*3; sp.vx=sp.vy=0; }
+    } else {
+      sp.t-=dt;
+      if(sp.t<=0){
+        const ang=Math.random()*6.28;
+        sp.vx=Math.cos(ang)*T.speed*0.3; sp.vy=Math.sin(ang)*T.speed*0.3;
+        sp.t=2+Math.random()*4;
+      }
+    }
+    if(sp.vx||sp.vy){
+      const nx2=sp.x+sp.vx*dt, ny2=sp.y+sp.vy*dt;
+      if(!isBlockedWater(nx2,sp.y)) sp.x=nx2; else sp.vx*=-0.7;
+      if(!isBlockedWater(sp.x,ny2)) sp.y=ny2; else sp.vy*=-0.7;
+      sp.animT+=dt;
+      const sdx=sp.vx-sp.vy; if(Math.abs(sdx)>0.05) sp.flip=sdx<0;
+    }
+  }
+  // respawn prédateurs marins
+  if(gameMode==="explore") for(let i=seaPredators.length-1;i>=0;i--){
+    if(seaPredators[i].dead && seaPredators[i].respawn<=0){
+      const tp=seaPredators[i].type; seaPredators.splice(i,1);
+      const ns={type:tp}; resetSeaPredator(ns); seaPredators.push(ns);
+    }
   }
 
   // déclenchement automatique du combat à l'approche d'un kobold
@@ -428,6 +500,7 @@ function loop(now){
   for(const g of groundItems) if(vis(g.x,g.y)) ents.push({depth:g.x+g.y+0.005, d:{type:"gitem", g}});
   for(const a of animals) if(!a.dead && vis(a.x,a.y)) ents.push({depth:a.x+a.y, d:{type:"animal", a}});
   for(const k of kobolds) if(!k.dead && vis(k.x,k.y)) ents.push({depth:k.x+k.y+0.002, d:{type:"kobold", k}});
+  for(const sp of seaPredators) if(!sp.dead && vis(sp.x,sp.y)) ents.push({depth:sp.x+sp.y+0.001, d:{type:"seapred", sp}});
   for(const b of butterflies) if(vis(b.x,b.y)) ents.push({depth:b.x+b.y+0.01, d:{type:"bf", b}});
   ents.sort((a,b)=>a.depth-b.depth);
 
@@ -497,6 +570,24 @@ function loop(now){
       cx.fillStyle="rgba(0,0,0,0.55)"; cx.fillRect(kxp-bw/2-1, kyp-TK.h-3, bw+2, 4);
       cx.fillStyle=hpFrac>0.5?"#5db858":hpFrac>0.25?"#e8a030":"#c0473f";
       cx.fillRect(kxp-bw/2, kyp-TK.h-2, Math.max(0,Math.round(bw*hpFrac)), 2);
+    } else if(d.type==="seapred"){
+      const sp=d.sp, T=SEA_PREDATOR_TYPES[sp.type];
+      const s=toScreen(sp.x,sp.y);
+      const img=SEA_PREDATOR_IMG[sp.type][(sp.vx||sp.vy)?Math.floor(sp.animT*10)%2:0];
+      const sxp=Math.round(s.x+ox), syp=Math.round(s.y+oy);
+      cx.fillStyle="rgba(20,50,80,0.28)";
+      cx.beginPath(); cx.ellipse(sxp, syp+1, img.width/2, 2.5, 0, 0, 7); cx.fill();
+      cx.save(); cx.translate(sxp, syp);
+      if(sp.flip) cx.scale(-1,1);
+      if(sp.hurtT>0 && Math.floor(t*16)%2) cx.globalAlpha=0.45;
+      cx.drawImage(img, -Math.round(img.width/2), -img.height+2);
+      cx.restore();
+      if(sp.state==="charge"){
+        const hpFracS=sp.hp/T.hp, bwS=img.width+4;
+        cx.fillStyle="rgba(0,0,0,0.55)"; cx.fillRect(sxp-bwS/2-1, syp-T.h-3, bwS+2, 4);
+        cx.fillStyle=hpFracS>0.5?"#5db858":hpFracS>0.25?"#e8a030":"#c0473f";
+        cx.fillRect(sxp-bwS/2, syp-T.h-2, Math.max(0,Math.round(bwS*hpFracS)), 2);
+      }
     } else {
       const s = toScreen(d.tx+0.5, d.ty+0.5);
       const shk = d.shake>0 ? Math.round(Math.sin(d.shake*40)*1.5) : 0;

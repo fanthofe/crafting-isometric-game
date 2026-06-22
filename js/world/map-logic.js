@@ -1,6 +1,17 @@
 "use strict";
 /* Logique du monde : cible la plus proche, action principale, feu de camp. */
 
+function _getBestBoat(){
+  const boats = ["waka_taua","proa","vaa_balancier","pirogue","radeau"];
+  for(const b of boats) if(countItem(b)>0) return b;
+  return null;
+}
+
+function _isAdjacentToWater(){
+  const ix=Math.floor(player.x), iy=Math.floor(player.y);
+  return [[0,1],[0,-1],[1,0],[-1,0]].some(([dx2,dy2])=>ground[iy+dy2]?.[ix+dx2]===3);
+}
+
 function nearestTarget(){
   let best=null, bd=REACH;
   for(const d of decor){
@@ -19,15 +30,58 @@ function nearestTarget(){
     const dist = Math.hypot(k.x-player.x, k.y-player.y);
     if(dist<bd){ bd=dist; best={kind:"kobold", k}; }
   }
+  // Prédateurs marins : attaquables depuis un bateau
+  if(player.boat) for(const sp of seaPredators){
+    if(sp.dead) continue;
+    const dist = Math.hypot(sp.x-player.x, sp.y-player.y);
+    if(dist<bd){ bd=dist; best={kind:"seapred", sp}; }
+  }
   return best;
 }
+
 function doAction(){
   if(player.swing>0) return;
+
+  // En bateau : prise du poisson ou lancer de ligne
+  if(player.boat){
+    if(fishing.state==="bite"){
+      fishing.state=null;
+      player.swing=SWING_TIME;
+      resolveFish();
+      return;
+    }
+    const tgtSea = nearestTarget();
+    if(tgtSea && tgtSea.kind==="seapred"){
+      player.swing=SWING_TIME;
+      hitSeaPredator(tgtSea.sp);
+      return;
+    }
+    if(!fishing.state){
+      castLine();
+      player.swing=SWING_TIME;
+    }
+    return;
+  }
+
+  // Embarquement : adjacent à l'eau + bateau en inventaire
+  if(!player.boat && _isAdjacentToWater()){
+    const boat = _getBestBoat();
+    if(boat){
+      player.boat = boat;
+      player._wasOnWater = false;
+      player.swing = SWING_TIME;
+      const ps2 = toScreen(player.x, player.y);
+      floats.push({sx:ps2.x, sy:ps2.y-26, t:1.8, str:`Embarqué : ${ITEMS[boat].name}`, c:"#4a8fa0"});
+      return;
+    }
+  }
+
   const tgt = nearestTarget();
   player.swing = SWING_TIME;
   if(!tgt) return;
   if(tgt.kind==="animal"){ hitAnimal(tgt.a); return; }
   if(tgt.kind==="kobold"){ hitKobold(tgt.k); return; }
+  if(tgt.kind==="seapred"){ hitSeaPredator(tgt.sp); return; }
   const t = tgt.d;
   const s = toScreen(t.tx+0.5, t.ty+0.5), p = toScreen(player.x, player.y);
   player.dir = (s.x < p.x) ? "left" : "right";
