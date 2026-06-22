@@ -1,0 +1,10 @@
+#held{position:fixed;pointer-events:none;z-index:50;display:none}
+#held .ic{display:block;width:24px;height:24px;background-size:contain;background-repeat:no-repeat;image-rendering:pixelated}
+#held .q{position:absolute;right:-6px;bottom:-6px;font-size:10px;font-weight:700;
+  color:#fff;text-shadow:0 0 3px #000,0 0 3px #000}
+#tip{
+  position:fixed;pointer-events:none;z-index:60;display:none;max-width:210px;
+  background:rgba(30,40,30,.93);color:#f3eeda;font-size:11px;line-height:1.5;
+  padding:6px 9px;border-radius:6px;border:1px solid var(--panel-border);
+}
+#tip b{color:#ffd98a}

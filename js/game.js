@@ -61,6 +61,18 @@ function loop(now){
         }
       }
     }
+    if(d.type==="palmier"){
+      if(!d.alive){
+        d.regrow -= dt;
+        if(d.regrow<=0){
+          if(Math.floor(player.x)===d.tx && Math.floor(player.y)===d.ty){ d.regrow=1; }
+          else { d.alive=true; blocked[d.ty][d.tx]=true; }
+        }
+      } else if(d.fruits<2){
+        d.regrowF -= dt;
+        if(d.regrowF<=0){ d.fruits++; d.regrowF = 20+rnd()*15; }
+      }
+    }
   }
   // animaux : errance, fuite, réapparition (figés pendant un combat)
   if(gameMode==="explore") for(const a of animals){
@@ -489,7 +501,7 @@ function loop(now){
       const shk = d.shake>0 ? Math.round(Math.sin(d.shake*40)*1.5) : 0;
       const bx = s.x+ox+shk, by = s.y+oy;
       // un arbre devient translucide uniquement s'il masque un élément situé derrière lui
-      if((d.type==="tree" && d.alive) || d.type==="fruittree"){
+      if((d.type==="tree" && d.alive) || d.type==="fruittree" || (d.type==="palmier" && d.alive)){
         const td = d.tx+d.ty;
         const tx0=bx-18, tx1=bx+18, ty0=by-46, ty1=by+2;
         let hides = false;
@@ -513,6 +525,13 @@ function loop(now){
           const fx = Math.round(bx-20+FRUIT_POS[i][0]), fy = Math.round(by-46+FRUIT_POS[i][1]);
           cx.fillStyle=fc; cx.fillRect(fx,fy,3,3);
           cx.fillStyle="rgba(255,255,255,.45)"; cx.fillRect(fx,fy,1,1);
+        }
+      }
+      else if(d.type==="palmier"){
+        if(d.alive){
+          cx.drawImage(PALM_TREE[d.v], Math.round(bx-20), Math.round(by-54));
+        } else {
+          cx.fillStyle="#a07840"; cx.fillRect(Math.round(bx-3), Math.round(by-6), 6, 6);
         }
       }
       else if(d.type==="rock"){

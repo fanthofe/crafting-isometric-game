@@ -1,0 +1,17 @@
+:root{
+  --sky-top:#a8dcec;
+  --sky-bottom:#e7f3cf;
+  --ink:#2b3a2e;
+  --panel:#fdf6e3;
+  --panel-border:#8a6240;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{
+  background:linear-gradient(var(--sky-top),var(--sky-bottom));
+  display:flex;align-items:center;justify-content:center;
+  font-family:"Courier New",ui-monospace,monospace;
+  -webkit-user-select:none;user-select:none;
+  touch-action:none;
+}
+canvas{image-rendering:pixelated;image-rendering:crisp-edges;display:block}

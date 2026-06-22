@@ -1,0 +1,54 @@
+"use strict";
+/* Tuiles isométriques pré-rendues : herbe, eau, sable, bords. */
+
+function diamondPath(g){ g.beginPath(); g.moveTo(TW/2,0); g.lineTo(TW,TH/2); g.lineTo(TW/2,TH); g.lineTo(0,TH/2); g.closePath(); }
+
+const GRASS = ["#79c061","#6fb759","#83c96b"].map(base=>
+  makeCanvas(TW,TH,g=>{
+    diamondPath(g); g.fillStyle=base; g.fill();
+    g.save(); diamondPath(g); g.clip();
+    for(let i=0;i<26;i++){
+      const x=Math.floor(rnd()*TW), y=Math.floor(rnd()*TH);
+      g.fillStyle = rnd()<0.5 ? "rgba(255,255,255,0.10)" : "rgba(30,70,30,0.14)";
+      g.fillRect(x,y,1,1);
+    }
+    g.restore();
+    diamondPath(g); g.strokeStyle="rgba(40,80,40,0.25)"; g.lineWidth=1; g.stroke();
+  })
+);
+const WATER = [0,1].map(f=>
+  makeCanvas(TW,TH,g=>{
+    diamondPath(g); g.fillStyle="#4f9fd6"; g.fill();
+    g.save(); diamondPath(g); g.clip();
+    g.fillStyle="#73badf";
+    for(let i=0;i<7;i++){
+      const x=2+Math.floor(rnd()*(TW-6)), y=2+Math.floor(rnd()*(TH-4));
+      g.fillRect(x+(f? 2:0), y, 4,1);
+    }
+    g.fillStyle="rgba(255,255,255,0.35)";
+    g.fillRect(6+(f?3:0),5,3,1); g.fillRect(20-(f?3:0),10,3,1);
+    g.restore();
+    diamondPath(g); g.strokeStyle="rgba(30,70,110,0.4)"; g.stroke();
+  })
+);
+const SAND = makeCanvas(TW,TH,g=>{
+  diamondPath(g); g.fillStyle="#e8d49a"; g.fill();
+  g.save(); diamondPath(g); g.clip();
+  for(let i=0;i<22;i++){
+    const x=Math.floor(rnd()*TW), y=Math.floor(rnd()*TH);
+    g.fillStyle = rnd()<0.5 ? "rgba(255,255,255,0.18)" : "rgba(150,120,60,0.18)";
+    g.fillRect(x,y,1,1);
+  }
+  g.restore();
+  diamondPath(g); g.strokeStyle="rgba(150,120,60,0.25)"; g.lineWidth=1; g.stroke();
+});
+const EDGE_L = makeCanvas(TW/2, TH+12, g=>{
+  g.beginPath(); g.moveTo(0,0); g.lineTo(TW/2,TH/2); g.lineTo(TW/2,TH/2+12); g.lineTo(0,12); g.closePath();
+  g.fillStyle="#8a6240"; g.fill();
+  g.fillStyle="#6f4c30"; g.fillRect(0,9,TW/2,1); g.fillRect(4,4,3,1);
+});
+const EDGE_R = makeCanvas(TW/2, TH+12, g=>{
+  g.beginPath(); g.moveTo(TW/2,0); g.lineTo(0,TH/2); g.lineTo(0,TH/2+12); g.lineTo(TW/2,12); g.closePath();
+  g.fillStyle="#7a5536"; g.fill();
+  g.fillStyle="#5f4128"; g.fillRect(0,10,TW/2,1); g.fillRect(8,5,3,1);
+});

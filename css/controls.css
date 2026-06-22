@@ -1,0 +1,19 @@
+#dpad{
+  position:fixed;left:18px;bottom:18px;display:none;
+  grid-template-columns:repeat(3,52px);grid-template-rows:repeat(3,52px);gap:4px;
+}
+#touchBtns{position:fixed;right:18px;bottom:24px;display:none;flex-direction:column;gap:10px}
+@media (pointer:coarse){ #dpad{display:grid} #touchBtns{display:flex} #hud p{display:none} }
+.db{
+  background:rgba(43,58,46,.18);border:2px solid rgba(43,58,46,.35);
+  border-radius:10px;color:var(--ink);font-size:20px;
+  display:flex;align-items:center;justify-content:center;touch-action:none;
+}
+.db:active{background:rgba(43,58,46,.35)}
+.db.empty{visibility:hidden}
+.tb{
+  width:58px;height:58px;border-radius:50%;font-size:24px;
+  background:rgba(253,246,227,.85);border:2px solid var(--panel-border);
+  display:flex;align-items:center;justify-content:center;touch-action:none;
+}
+.tb:active{background:rgba(228,205,160,.95)}

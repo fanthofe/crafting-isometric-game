@@ -1,7 +1,6 @@
 "use strict";
-/* Kobolds (Fils de la Lune Brisée) : sprites et types d'ennemis. */
+/* Kobolds (Fils de la Lune Brisée) : sprites, types, IA et combat. */
 
-/* ====================== Kobolds — Fils de la Lune Brisée ====================== */
 const KOBOLD_IMG = {
   eclaireur: frames2(12,18,(g,f)=>{
     g.fillStyle="#7a7a8a"; g.fillRect(3,0,6,5);
@@ -82,3 +81,27 @@ const CLOUD = makeCanvas(64,24,g=>{
 const clouds = [];
 for(let i=0;i<8;i++) clouds.push({x:rnd()*900-200, y:18+rnd()*70, s:0.5+rnd()*0.8, v:3+rnd()*5});
 
+function hitKobold(k){
+  const p = toScreen(player.x, player.y), s = toScreen(k.x, k.y);
+  player.dir = s.x<p.x ? "left" : "right";
+  const dmg = statForce();
+  k.hp -= dmg; k.hurtT = 0.3; k.alertT = 3;
+  const T = KOBOLD_TYPES[k.type];
+  if(k.hp > Math.ceil(T.hp*0.25)){ k.state="charge"; k.t=6; }
+  else { k.state="flee"; k.t=3; }
+  burst(s.x, s.y-6, "#8ab0c8", 6);
+  gainXP("chasse", 1);
+  if(k.hp<=0){
+    gainXP("chasse", T.xp);
+    for(const [id,[mn,mx]] of Object.entries(T.drops)){
+      const n = mn + Math.floor(Math.random()*(mx-mn+1));
+      if(n>0) groundItems.push({id, qty:n, x:k.x+(Math.random()-0.5)*0.6,
+        y:k.y+(Math.random()-0.5)*0.6, ph:Math.random()*6.28, cool:0.6});
+    }
+    floats.push({sx:s.x, sy:s.y-18, t:1.5, str:`${T.name} vaincu !`, c:"#6080a0"});
+    burst(s.x, s.y-4, "#4a6a88", 10);
+    k.dead=true; k.respawn=60+Math.random()*40;
+    if(!raka.visible){ raka.visible=true; }
+    spiritSay("raka","Bien. Mais d'autres viendront.",4);
+  }
+}
