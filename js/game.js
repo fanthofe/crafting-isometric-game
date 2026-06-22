@@ -4,6 +4,7 @@
 /* ====================== Boucle de jeu ====================== */
 let last = performance.now();
 function loop(now){
+  pollGamepad();
   const dt = Math.min(0.05, (now-last)/1000); last = now;
   const t = now/1000;
 
