@@ -5,7 +5,7 @@
 ## Lancer le jeu
 
 ```bash
-xdg-open la-plaine.html
+xdg-open index.html
 ```
 
 Ou double-clic sur [`la-plaine.html`](la-plaine.html). Aucune dépendance, aucun build.
