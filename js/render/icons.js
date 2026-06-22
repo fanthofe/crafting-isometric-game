@@ -156,13 +156,14 @@ const ICON_SRC = {
 const ICON = {};
 for(const k in ICON_SRC) ICON[k] = ICON_SRC[k].toDataURL();
 for(const k in ITEMS){
-  if(!ICON[k]){
-    ICON[k] = makeCanvas(12,12,g=>{
+  if(!ICON_SRC[k]){
+    ICON_SRC[k] = makeCanvas(12,12,g=>{
       const c = ITEMS[k].c || "#808080";
       g.fillStyle=c; g.fillRect(1,1,10,10);
       g.fillStyle="rgba(255,255,255,0.28)"; g.fillRect(1,1,10,3);
       g.fillStyle="rgba(0,0,0,0.18)"; g.fillRect(1,8,10,3);
-    }).toDataURL();
+    });
+    ICON[k] = ICON_SRC[k].toDataURL();
   }
 }
 

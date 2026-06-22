@@ -15,10 +15,7 @@ function _rising(idx, pressed) {
 
 function pollGamepad() {
   const gp = navigator.getGamepads?.()[0];
-  if (!gp) {
-    keys.up = keys.down = keys.left = keys.right = false;
-    return;
-  }
+  if (!gp) return;
 
   const now = performance.now();
 

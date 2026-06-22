@@ -245,7 +245,7 @@ chaque frame par `pollGamepad()`. Si le joueur lâche la manette en plein
 mouvement, les `keys` restent à leur dernière valeur — ajouter une remise à
 zéro de `keys` en début de `pollGamepad()` si `gp` est null :
 ```js
-if (!gp) { keys.up = keys.down = keys.left = keys.right = false; return; }
+if (!gp) return; // ne pas toucher à keys — le clavier reste actif
 ```
 
 **Inventaire ouvert** : `toggleInv()` et `placeFire()` vérifient déjà
