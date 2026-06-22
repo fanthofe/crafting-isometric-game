@@ -20,19 +20,36 @@
 <div id="bar"></div>
 
 <div id="inv">
-  <button id="closeInv">✕</button>
-  <h2>INVENTAIRE</h2>
-  <div id="grid"></div>
-  <div id="weightRow"><span>⚖</span><div id="weightBar"><div id="weightFill"></div></div><span id="weightTxt"></span></div>
-  <div id="dropZone">🗑 Jeter au sol l'objet tenu</div>
-  <h3>ÉQUIPEMENT</h3>
-  <div id="equipRow"></div>
-  <div id="statsRow"></div>
-  <h3>COMPÉTENCES</h3>
-  <div id="skills"></div>
-  <h3>FABRICATION</h3>
-  <div id="invRecipes"></div>
-  <div class="hint">Clic : prendre / poser · Clic droit : moitié / un seul · Double-clic : manger / équiper</div>
+  <div id="invHeader">
+    <span id="invTitle">KAIMANA</span>
+    <div id="invTabs">
+      <button class="itab active" data-tab="inv">INV</button>
+      <button class="itab" data-tab="craft">CRAFT</button>
+      <button class="itab" data-tab="skills">SKILLS</button>
+    </div>
+    <button id="closeInv">✕</button>
+  </div>
+  <div class="itabpanel" data-panel="inv">
+    <div id="invBody">
+      <div id="equipCol">
+        <div id="equipRow"></div>
+        <div id="statsRow"></div>
+      </div>
+      <div id="invRight">
+        <div id="grid"></div>
+        <div id="weightRow"><span>⚖</span><div id="weightBar"><div id="weightFill"></div></div><span id="weightTxt"></span></div>
+        <div id="dropZone">🗑 Jeter l'objet tenu</div>
+      </div>
+    </div>
+  </div>
+  <div class="itabpanel" data-panel="craft" style="display:none">
+    <div id="craftFilters"></div>
+    <div id="invRecipes"></div>
+  </div>
+  <div class="itabpanel" data-panel="skills" style="display:none">
+    <div id="skills"></div>
+  </div>
+  <div class="hint">Clic : prendre / poser · Clic droit : moitié · Double-clic : utiliser / équiper</div>
 </div>
 <div id="held"><span class="ic"></span><span class="q"></span></div>
 <div id="tip"></div>

@@ -14,6 +14,7 @@ addEventListener("keydown", e=>{
   if(e.code==="KeyE" || e.code==="Space"){ actionQueued=true; e.preventDefault(); }
   // inventaire & feu de camp indisponibles pendant un combat (le menu de combat gère ces touches)
   if(e.code==="KeyI"){ if(gameMode==="explore") toggleInv(); e.preventDefault(); }
+  if(e.code==="KeyC"){ if(gameMode==="explore"){ toggleInv(true); switchTab("craft"); } e.preventDefault(); }
   if(e.code==="KeyF"){ if(gameMode==="explore") placeFire(); e.preventDefault(); }
   if(e.code==="Escape"){ if(gameMode==="explore") toggleInv(false); }
 });

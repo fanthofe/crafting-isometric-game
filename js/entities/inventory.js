@@ -1,7 +1,7 @@
 "use strict";
 /* État de l'inventaire : slots, équipement, poids, gestion des items. */
 
-const SLOT_COUNT = 24;
+const SLOT_COUNT = 36;
 const MAX_WEIGHT = 80;
 const slots = new Array(SLOT_COUNT).fill(null);
 let held = null;
