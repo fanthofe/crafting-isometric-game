@@ -313,22 +313,44 @@ function doFlee(){
 }
 
 /* ====================== Fin de combat ====================== */
+/* Avance (dx,dy) en direction normalisée sur `dist` tuiles en s'arrêtant
+   juste avant l'eau. Les ennemis aquatiques s'arrêtent juste avant la terre. */
+function pushClamped(x, y, dx, dy, dist, mustBeWater){
+  const STEPS=Math.max(4, Math.ceil(dist*8));
+  let bestX=x, bestY=y;
+  for(let i=1;i<=STEPS;i++){
+    const nx=x+dx*dist*i/STEPS, ny=y+dy*dist*i/STEPS;
+    const tile=ground[Math.floor(ny)]?.[Math.floor(nx)];
+    const inWater=(tile===3);
+    if(mustBeWater && !inWater) break; // aquatique → s'arrête avant la terre
+    if(!mustBeWater && inWater)  break; // terrestre → s'arrête avant l'eau
+    if(!isBlocked(nx,ny)){ bestX=nx; bestY=ny; }
+  }
+  return {x:bestX, y:bestY};
+}
+
 function finishBattle(){
   const result=battle.phase;
   for(const c of battle.enemies){
     const k=c.ref;
-    if(!k.dead){ k.inBattle=false; k.state="patrol"; k.t=2+Math.random()*2; k.alertT=0; k.vx=k.vy=0; }
+    if(!k.dead){
+      k.inBattle=false; k.state="patrol"; k.t=2+Math.random()*2; k.alertT=0; k.vx=k.vy=0;
+      if(result==="flee"){
+        // push chaque ennemi à l'opposé du joueur en respectant le terrain
+        let dx=k.x-player.x, dy=k.y-player.y; const l=Math.hypot(dx,dy)||1;
+        const isAquatic=!!SEA_PREDATOR_TYPES[k.type]; // futur usage prédateurs
+        const p=pushClamped(k.x, k.y, dx/l, dy/l, 3.5, isAquatic);
+        k.x=p.x; k.y=p.y;
+      }
+    }
   }
   if(result==="defeat"){
     player.hp=player.maxHp; player.hurtT=2.0;
     player.x=spawn.x; player.y=spawn.y;
     const s=toScreen(spawn.x,spawn.y);
     floats.push({sx:s.x, sy:s.y-30, t:2.2, str:"Vaincu… retour au camp", c:"#8a3030"});
-  } else if(result==="flee"){
-    let ex=0, ey=0, n=0; for(const c of battle.enemies){ ex+=c.ref.x; ey+=c.ref.y; n++; }
-    if(n){ ex/=n; ey/=n; let dx=player.x-ex, dy=player.y-ey; const l=Math.hypot(dx,dy)||1;
-      const f=clampFree(player.x+dx/l*4, player.y+dy/l*4); player.x=f.x; player.y=f.y; }
   }
+  // flee : le joueur reste exactement où il est, pas de déplacement
   player.battleCD=2.0;
   gameMode="explore";
   battle.active=false; battle.anchor=null; battle.phase="done";
