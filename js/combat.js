@@ -349,14 +349,12 @@ function renderBattle(t, ox, oy){
   const ac=toScreen(battle.anchor.x, battle.anchor.y);
   const cxp=ac.x+ox, cyp=ac.y+oy, R=battle.radius, k=battle.zoneK;
 
-  // 1) pénombre extérieure (ellipse iso troue le centre)
+  // 1) pénombre extérieure centrée sur l'ancre de combat
   cx.save();
-  cx.translate(cxp,cyp); cx.scale(1, TH/TW);
-  const g=cx.createRadialGradient(0,0,R*0.6, 0,0,R*1.4);
+  const g=cx.createRadialGradient(cxp,cyp,R*0.6, cxp,cyp,R*1.4);
   g.addColorStop(0,   "rgba(8,10,26,0)");
   g.addColorStop(0.7, "rgba(8,10,26,0)");
   g.addColorStop(1,   `rgba(8,10,26,${BATTLE_DARK*k})`);
-  cx.setTransform(1,0,0,1,0,0);
   cx.fillStyle=g; cx.fillRect(0,0,LW,LH);
   cx.restore();
 
