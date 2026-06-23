@@ -1,7 +1,7 @@
 "use strict";
 /* Constantes moteur, canvas, mise à l'échelle, générateur aléatoire déterministe. */
 
-const TW = 32, TH = 16;
+const TW = 32, TH = 16, SIDE_H = 6; // SIDE_H : hauteur des flancs des blocs 3D
 const MAP = 96;
 const LW = 432, LH = 270;
 const SPEED = 3.4;
