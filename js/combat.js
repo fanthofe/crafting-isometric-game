@@ -368,6 +368,14 @@ function renderBattle(t, ox, oy){
   cx.beginPath(); cx.arc(0,0,R-2,0,7); cx.strokeStyle=`rgba(200,225,255,${(0.25+0.15*Math.sin(t*4))*k})`; cx.lineWidth=1; cx.stroke();
   cx.restore(); cx.globalAlpha=1;
 
+  // barres letterbox cinématiques (apparaissent / disparaissent avec la zone)
+  if(k>0){
+    const bh=Math.round(LH*0.09*k);
+    cx.fillStyle="#000000";
+    cx.fillRect(0,0,LW,bh);
+    cx.fillRect(0,LH-bh,LW,bh);
+  }
+
   if(battle.banner) renderBanner(battle.banner.text);
   if(k<0.5) return;                 // pas d'UI pendant les fondus d'entrée/sortie
 

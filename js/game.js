@@ -653,6 +653,7 @@ function loop(now){
         if(ff){ cx.fillRect(fx-1,fy-5,3,3); } else { cx.fillRect(fx-1,fy-6,2,4); }
         // étincelle
         if(Math.floor(t*4+d.ph)%3===0){ cx.fillStyle="#ffd98a"; cx.fillRect(fx+(ff?2:-3), fy-12, 1,1); }
+        addLight(fx, fy - 4, 50 + 28*deep, 255, 140, 50, (0.20 + 0.28*deep) * fl2);
       }
       else if(d.type==="flower"){
         const sw = Math.round(Math.sin(t*2+d.ph)*1.2);
@@ -806,6 +807,12 @@ function loop(now){
     }
     cx.restore(); cx.globalAlpha = 1;
   }
+  // post-traitement HD-2D (lighting → bloom → bokeh → vignette → grain)
+  flushLights(t);
+  applyBloom();
+  drawBokeh(t, dt);
+  applyVignette();
+  applyFilmGrain(t);
   // textes flottants
   cx.textAlign="center"; cx.font="bold 9px 'Courier New', monospace";
   for(const f of floats){
