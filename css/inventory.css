@@ -7,16 +7,16 @@
   position: fixed;
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  width: 362px;
-  max-width: 95vw;
+  width: min(88vw, 760px);
+  max-height: 92vh;
   background: #1a1610;
   border: 2px solid #4a3e28;
-  border-radius: 5px;
+  border-radius: 6px;
   color: #e8dcc0;
   display: none;
   flex-direction: column;
   z-index: 10;
-  box-shadow: 0 0 0 1px #0a0806, 0 8px 32px rgba(0,0,0,.85),
+  box-shadow: 0 0 0 1px #0a0806, 0 10px 40px rgba(0,0,0,.9),
               inset 0 1px 0 rgba(200,160,80,.08);
   overflow: hidden;
   font-family: inherit;
@@ -27,25 +27,25 @@
 #invHeader {
   display: flex;
   align-items: flex-end;
-  padding: 7px 8px 0;
+  padding: 9px 12px 0;
   background: #120f0a;
-  gap: 3px;
+  gap: 4px;
   border-bottom: 1px solid #4a3e28;
   flex-shrink: 0;
 }
 #invTitle {
-  font-size: 8px;
-  letter-spacing: 3px;
+  font-size: 11px;
+  letter-spacing: 4px;
   color: #c8a050;
   flex: 1;
-  padding-bottom: 5px;
+  padding-bottom: 7px;
 }
 #invTabs { display: flex; gap: 1px; }
 .itab {
   font-family: inherit;
-  font-size: 8px;
-  letter-spacing: 1.5px;
-  padding: 4px 10px 3px;
+  font-size: 10px;
+  letter-spacing: 2px;
+  padding: 6px 14px 5px;
   background: transparent;
   border: 1px solid transparent;
   border-bottom: none;
@@ -65,46 +65,46 @@
 #closeInv {
   background: none; border: none;
   color: #6a5a3a; cursor: pointer;
-  font-size: 11px; padding: 3px 3px 7px;
+  font-size: 14px; padding: 4px 4px 9px;
   line-height: 1; font-family: inherit;
 }
 #closeInv:hover { color: #e8dcc0; }
 
 /* ── Panels onglets ── */
 .itabpanel {
-  padding: 7px 9px 6px;
+  padding: 10px 14px 10px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 8px;
   flex-shrink: 0;
 }
 
 /* ── INV tab : layout 2 colonnes ── */
 #invBody {
   display: flex;
-  gap: 7px;
+  gap: 12px;
   align-items: flex-start;
 }
 #equipCol {
-  width: 106px;
+  width: 155px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
 }
 #invRight {
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 6px;
 }
 
 /* ── Grille inventaire (9 × 4) ── */
 #grid {
   display: grid;
   grid-template-columns: repeat(9, 1fr);
-  gap: 2px;
+  gap: 3px;
 }
 
 /* ── Slot générique ── */
@@ -113,14 +113,14 @@
   cursor: pointer;
   background: #2a2318;
   border: 1px solid #3e3222;
-  border-radius: 2px;
+  border-radius: 3px;
   aspect-ratio: 1;
   box-sizing: border-box;
 }
 .islot:hover { border-color: #c8a050; background: #3a3228; }
 .islot .ic {
   position: absolute;
-  inset: 2px;
+  inset: 3px;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -128,10 +128,10 @@
 }
 .islot .q {
   position: absolute;
-  right: 1px; bottom: 0;
-  font-size: 7px; font-weight: 700;
+  right: 2px; bottom: 1px;
+  font-size: 9px; font-weight: 700;
   color: #e8dcc0;
-  text-shadow: 0 1px 2px #000, 0 0 3px #000;
+  text-shadow: 0 1px 2px #000, 0 0 4px #000;
   line-height: 1;
 }
 .islot.filled { background: #322818; border-color: #5a4828; }
@@ -140,50 +140,50 @@
 #equipRow {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
 }
 .eqwrap {
   display: flex;
   align-items: center;
-  gap: 2px;
-  height: 22px;
+  gap: 4px;
+  height: 32px;
 }
 .eqicon {
-  font-size: 9px;
-  width: 13px;
+  font-size: 13px;
+  width: 18px;
   text-align: center;
   flex-shrink: 0;
   line-height: 1;
 }
 .eqlabel {
-  font-size: 6px;
-  letter-spacing: .3px;
-  color: #5a4a30;
-  width: 42px;
+  font-size: 8px;
+  letter-spacing: .4px;
+  color: #6a5a3a;
+  width: 56px;
   flex-shrink: 0;
   overflow: hidden;
   white-space: nowrap;
 }
 .eqslot {
   flex: 1;
-  height: 20px;
+  height: 28px;
   background: #201a0c;
   border-color: #3e3222;
   aspect-ratio: unset;
 }
 .eqslot:hover { border-color: #c8a050; }
-.eqslot .ic { inset: 1px; }
+.eqslot .ic { inset: 2px; }
 
 #statsRow {
-  margin-top: 3px;
-  padding-top: 4px;
+  margin-top: 4px;
+  padding-top: 6px;
   border-top: 1px solid #2a2318;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
 }
 .statline {
-  font-size: 8px;
+  font-size: 11px;
   color: #8a7a5a;
 }
 .statline b { color: #c8a050; }
@@ -192,28 +192,28 @@
 #weightRow {
   display: flex;
   align-items: center;
-  gap: 5px;
-  font-size: 8px;
+  gap: 7px;
+  font-size: 11px;
   color: #6a5a3a;
 }
 #weightBar {
   flex: 1;
-  height: 4px;
+  height: 6px;
   background: #2a2318;
   border: 1px solid #3e3222;
-  border-radius: 2px;
+  border-radius: 3px;
   overflow: hidden;
 }
 #weightFill { height: 100%; background: #5a9050; transition: width .15s; }
-#weightTxt { min-width: 72px; font-size: 8px; white-space: nowrap; }
+#weightTxt { min-width: 100px; font-size: 11px; white-space: nowrap; }
 
 /* ── Zone de jet ── */
 #dropZone {
-  font-size: 8px;
+  font-size: 11px;
   text-align: center;
-  padding: 4px 6px;
+  padding: 7px 10px;
   border: 1px dashed #3a3020;
-  border-radius: 3px;
+  border-radius: 4px;
   color: #4a3a28;
   cursor: pointer;
 }
@@ -223,16 +223,16 @@
 #craftFilters {
   display: flex;
   flex-wrap: wrap;
-  gap: 3px;
+  gap: 5px;
 }
 .cfbtn {
   font-family: inherit;
-  font-size: 7px;
-  letter-spacing: .5px;
-  padding: 3px 7px;
+  font-size: 9px;
+  letter-spacing: .7px;
+  padding: 5px 11px;
   background: #1c180e;
   border: 1px solid #3e3222;
-  border-radius: 3px;
+  border-radius: 4px;
   color: #6a5a3a;
   cursor: pointer;
   line-height: 1;
@@ -247,8 +247,8 @@
 #invRecipes {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
-  max-height: 148px;
+  gap: 6px;
+  max-height: 280px;
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: thin;
@@ -257,15 +257,15 @@
 }
 
 .rcard {
-  width: 62px;
-  padding: 4px 3px;
+  width: 88px;
+  padding: 7px 5px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 3px;
   background: #1c180e;
   border: 1px solid #3a3020;
-  border-radius: 3px;
+  border-radius: 4px;
   box-sizing: border-box;
   flex-shrink: 0;
 }
@@ -273,7 +273,7 @@
 .rcard.rcavail:hover { border-color: #c8a050; }
 .rcard.rccant { opacity: .38; }
 .rcard .ricon {
-  width: 16px; height: 16px;
+  width: 24px; height: 24px;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -281,20 +281,20 @@
   flex-shrink: 0;
 }
 .rcard .rname {
-  font-size: 7px;
+  font-size: 9px;
   text-align: center;
   color: #e8dcc0;
-  line-height: 1.2;
+  line-height: 1.3;
   width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .rcard .rcost {
-  font-size: 6px;
+  font-size: 8px;
   text-align: center;
   color: #7a6a4a;
-  line-height: 1.2;
+  line-height: 1.3;
   width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -302,15 +302,15 @@
 }
 .rcard .rbtn {
   font-family: inherit;
-  font-size: 7px;
-  padding: 2px 5px;
+  font-size: 9px;
+  padding: 3px 8px;
   background: #375a28;
   border: 1px solid #284818;
-  border-radius: 2px;
+  border-radius: 3px;
   color: #b8d898;
   cursor: pointer;
   line-height: 1;
-  margin-top: 1px;
+  margin-top: 2px;
   font-weight: 700;
 }
 .rcard .rbtn:hover { background: #426a30; }
@@ -325,43 +325,43 @@
 #skills {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 2px 0;
+  gap: 8px;
+  padding: 4px 0;
 }
 .skrow {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 10px;
 }
 .skname {
-  min-width: 80px;
-  font-size: 9px;
+  min-width: 110px;
+  font-size: 12px;
   color: #e8dcc0;
 }
 .skbar {
   flex: 1;
-  height: 5px;
+  height: 7px;
   background: #2a2318;
   border: 1px solid #3e3222;
-  border-radius: 2px;
+  border-radius: 3px;
   overflow: hidden;
 }
 .skfill { height: 100%; background: #c8a050; }
 .sklvl {
-  font-size: 7px;
+  font-size: 10px;
   color: #8a7a5a;
-  min-width: 86px;
+  min-width: 110px;
   text-align: right;
   white-space: nowrap;
 }
 
 /* ── Hint footer ── */
 .hint {
-  font-size: 7px;
+  font-size: 9px;
   color: #3a2e1a;
   text-align: center;
-  padding: 3px 0 4px;
+  padding: 5px 0 6px;
   border-top: 1px solid #221e12;
-  letter-spacing: .3px;
+  letter-spacing: .4px;
   flex-shrink: 0;
 }
