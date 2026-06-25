@@ -168,6 +168,51 @@ const STATION_IMG = {
   atelier_alchimie: ATELIER_ALCHIMIE_IMG, embarcadere: EMBARCADERE_IMG,
 };
 
+/* ── Constructions défensives posables ── */
+const CLOTURE_IMG = makeCanvas(30,16,g=>{
+  g.fillStyle="#6f4c30"; g.fillRect(3,4,3,11); g.fillRect(14,4,3,11); g.fillRect(25,4,3,11);
+  g.fillStyle="#8a6240"; g.fillRect(3,6,25,2); g.fillRect(3,10,25,2);
+  g.fillStyle="#5f4128"; g.fillRect(3,4,3,1); g.fillRect(14,4,3,1); g.fillRect(25,4,3,1);
+});
+const PALISSADE_IMG = makeCanvas(30,26,g=>{
+  g.fillStyle="#6b4a2d";
+  for(let i=0;i<6;i++){ const x=2+i*5; g.fillRect(x,6,4,18);
+    g.beginPath(); g.moveTo(x,6); g.lineTo(x+2,2); g.lineTo(x+4,6); g.closePath(); g.fill(); }
+  g.fillStyle="#54371f"; g.fillRect(2,14,28,2);
+  g.fillStyle="#7a5536"; for(let i=0;i<6;i++) g.fillRect(2+i*5,6,1,18);
+});
+const MUR_BASALTE_IMG = makeCanvas(30,24,g=>{
+  g.fillStyle="#4a4a5a"; g.fillRect(2,6,26,18);
+  g.fillStyle="#5a5a6c"; g.fillRect(2,6,26,2);
+  g.fillStyle="#34343f"; g.fillRect(2,22,26,2);
+  g.fillStyle="#3a3a48"; g.fillRect(2,12,26,1); g.fillRect(2,18,26,1);
+  g.fillRect(10,6,1,6); g.fillRect(20,12,1,6); g.fillRect(15,18,1,6);
+});
+const PORTAIL_IMG = makeCanvas(32,24,g=>{
+  g.fillStyle="#5f4128"; g.fillRect(2,4,4,20); g.fillRect(26,4,4,20);
+  g.fillStyle="#8a6240"; g.fillRect(6,8,20,12);
+  g.fillStyle="#6f4c30"; g.fillRect(6,8,20,1); g.fillRect(6,13,20,1); g.fillRect(6,19,20,1);
+  g.fillStyle="#a07a4a"; g.fillRect(6,8,20,1);
+  g.fillStyle="#6f4c30"; for(let i=0;i<9;i++) g.fillRect(7+i*2,18-i,2,2);
+});
+const PIEU_IMG = makeCanvas(24,12,g=>{
+  g.fillStyle="#5f4128"; g.fillRect(3,8,18,3);
+  g.fillStyle="#caa173";
+  for(let i=0;i<5;i++){ const x=4+i*4; g.beginPath(); g.moveTo(x,8); g.lineTo(x+2,2); g.lineTo(x+4,8); g.closePath(); g.fill(); }
+  g.fillStyle="#8a6240"; for(let i=0;i<5;i++) g.fillRect(4+i*4,7,4,1);
+});
+const FILET_IMG = makeCanvas(24,12,g=>{
+  g.strokeStyle="#c4a46a"; g.lineWidth=1;
+  for(let i=0;i<5;i++){ const x=2+i*5;
+    g.beginPath(); g.moveTo(x,3); g.lineTo(x+4,9); g.stroke();
+    g.beginPath(); g.moveTo(x+4,3); g.lineTo(x,9); g.stroke(); }
+  g.fillStyle="#a07a4a"; g.fillRect(2,3,20,1); g.fillRect(2,9,20,1);
+});
+const DEFENSE_IMG = {
+  cloture_bois: CLOTURE_IMG, palissade: PALISSADE_IMG, mur_basalte: MUR_BASALTE_IMG,
+  portail_bois: PORTAIL_IMG, pieu_piege: PIEU_IMG, filet_chasse: FILET_IMG,
+};
+
 /* Petit sprite de feu pour l'aperçu fantôme (le feu posé est dessiné à la volée). */
 const FEU_GHOST_IMG = makeCanvas(16,14,g=>{
   g.fillStyle="#9aa2a6"; g.fillRect(2,10,3,2); g.fillRect(11,10,3,2); g.fillRect(6,11,4,2);
@@ -185,7 +230,7 @@ function tintSprite(src, r, g, b){
     c.fillRect(0, 0, src.width, src.height);
   });
 }
-const GHOST_SRC = Object.assign({feu: FEU_GHOST_IMG}, STATION_IMG);
+const GHOST_SRC = Object.assign({feu: FEU_GHOST_IMG}, STATION_IMG, DEFENSE_IMG);
 const GHOST_OK = {}, GHOST_BAD = {};
 for(const k in GHOST_SRC){
   GHOST_OK[k]  = tintSprite(GHOST_SRC[k], 120, 210, 120);

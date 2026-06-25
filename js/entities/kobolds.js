@@ -91,17 +91,21 @@ function hitKobold(k){
   else { k.state="flee"; k.t=3; }
   burst(s.x, s.y-6, "#8ab0c8", 6);
   gainXP("chasse", 1);
-  if(k.hp<=0){
-    gainXP("chasse", T.xp);
-    for(const [id,[mn,mx]] of Object.entries(T.drops)){
-      const n = mn + Math.floor(Math.random()*(mx-mn+1));
-      if(n>0) groundItems.push({id, qty:n, x:k.x+(Math.random()-0.5)*0.6,
-        y:k.y+(Math.random()-0.5)*0.6, ph:Math.random()*6.28, cool:0.6});
-    }
-    floats.push({sx:s.x, sy:s.y-18, t:1.5, str:`${T.name} vaincu !`, c:"#6080a0"});
-    burst(s.x, s.y-4, "#4a6a88", 10);
-    k.dead=true; k.respawn=60+Math.random()*40;
-    if(!raka.visible){ raka.visible=true; }
-    spiritSay("raka","Bien. Mais d'autres viendront.",4);
+  if(k.hp<=0){ killKobold(k); spiritSay("raka","Bien. Mais d'autres viendront.",4); }
+}
+
+/* Mort d'un kobold : drops, XP, dépouille. Réutilisé par les pièges. */
+function killKobold(k){
+  const T = KOBOLD_TYPES[k.type];
+  const s = toScreen(k.x, k.y);
+  gainXP("chasse", T.xp);
+  for(const [id,[mn,mx]] of Object.entries(T.drops)){
+    const n = mn + Math.floor(Math.random()*(mx-mn+1));
+    if(n>0) groundItems.push({id, qty:n, x:k.x+(Math.random()-0.5)*0.6,
+      y:k.y+(Math.random()-0.5)*0.6, ph:Math.random()*6.28, cool:0.6});
   }
+  floats.push({sx:s.x, sy:s.y-18, t:1.5, str:`${T.name} vaincu !`, c:"#6080a0"});
+  burst(s.x, s.y-4, "#4a6a88", 10);
+  k.dead = true; k.respawn = 60+Math.random()*40;
+  if(!raka.visible) raka.visible = true;
 }

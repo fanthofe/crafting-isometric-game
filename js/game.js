@@ -161,6 +161,7 @@ function loop(now){
     if(k.hurtT>0) k.hurtT=Math.max(0,k.hurtT-dt);
     if(k.alertT>0) k.alertT-=dt;
     if(k.dead){ k.respawn-=dt; continue; }
+    if(k.netT>0){ k.netT-=dt; k.vx=k.vy=0; continue; }   // pris au filet : immobilisé
     const T=KOBOLD_TYPES[k.type];
     const pd=Math.hypot(player.x-k.x, player.y-k.y);
     if(k.alertT>0 && k.state==="charge"){
@@ -223,8 +224,8 @@ function loop(now){
     }
     if(k.vx||k.vy){
       const nx2=k.x+k.vx*dt, ny2=k.y+k.vy*dt;
-      if(!isBlocked(nx2,k.y)) k.x=nx2; else k.vx*=-0.5;
-      if(!isBlocked(k.x,ny2)) k.y=ny2; else k.vy*=-0.5;
+      if(!isBlocked(nx2,k.y)) k.x=nx2; else { kobAttackBarrier(k, nx2, k.y); k.vx*=-0.5; }
+      if(!isBlocked(k.x,ny2)) k.y=ny2; else { kobAttackBarrier(k, k.x, ny2); k.vy*=-0.5; }
       k.animT+=dt;
       const sdx=k.vx-k.vy; if(Math.abs(sdx)>0.05) k.flip=sdx<0;
     }
@@ -234,6 +235,9 @@ function loop(now){
   if(gameMode==="explore") for(let i=kobolds.length-1;i>=0;i--){
     if(kobolds[i].dead && kobolds[i].respawn<=0){ const tp=kobolds[i].type; kobolds.splice(i,1); spawnKobold(tp); }
   }
+
+  // pièges au sol (pieu / filet) déclenchés par les kobolds
+  if(gameMode==="explore") checkTraps();
 
   // prédateurs marins
   if(gameMode==="explore") for(const sp of seaPredators){
@@ -687,6 +691,20 @@ function loop(now){
           cx.fillStyle="#e8c870"; cx.fillText(lbl, sxp, ly-1.5);
           cx.fillStyle="#b8d898"; cx.fillRect(sxp-1, ly+1, 2, 2);
           cx.textAlign="left";
+        }
+      }
+      else if(DEFENSE_IMG[d.type]){
+        const img = DEFENSE_IMG[d.type];
+        const sxp = Math.round(bx), syp = Math.round(by);
+        cx.fillStyle="rgba(20,30,20,0.25)";
+        cx.beginPath(); cx.ellipse(sxp, syp+1, img.width/2-2, 2.2, 0, 0, 7); cx.fill();
+        cx.drawImage(img, sxp-Math.round(img.width/2), syp-img.height+4);
+        const maxhp = ITEMS[d.type] && ITEMS[d.type].placeHp;
+        if(maxhp && d.hp!=null && d.hp<maxhp){
+          const frac = Math.max(0, d.hp/maxhp), bw = img.width;
+          cx.fillStyle="rgba(0,0,0,0.55)"; cx.fillRect(sxp-bw/2-1, syp-img.height, bw+2, 3);
+          cx.fillStyle = frac>0.5 ? "#5db858" : frac>0.25 ? "#e8a030" : "#c0473f";
+          cx.fillRect(sxp-bw/2, syp-img.height+1, Math.round(bw*frac), 1);
         }
       }
       else if(d.type==="flower"){

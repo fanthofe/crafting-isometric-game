@@ -15,7 +15,8 @@ function _isAdjacentToWater(){
 function nearestTarget(){
   let best=null, bd=REACH;
   for(const d of decor){
-    const hittable = ((d.type==="tree"||d.type==="rock"||d.type==="palmier") && d.alive) || d.type==="fruittree";
+    const hittable = ((d.type==="tree"||d.type==="rock"||d.type==="palmier") && d.alive)
+                   || d.type==="fruittree" || DESTRUCTIBLE.has(d.type);
     if(!hittable) continue;
     const dist = Math.hypot(d.tx+0.5-player.x, d.ty+0.5-player.y);
     if(dist<bd){ bd=dist; best={kind:"decor", d}; }
@@ -93,6 +94,7 @@ function doAction(){
   player.dir = (s.x < p.x) ? "left" : "right";
   t.shake=0.25;
   const sp = toScreen(t.tx+0.5, t.ty+0.5);
+  if(DESTRUCTIBLE.has(t.type)){ damageBarrier(t, statForce()); return; }   // démolir sa propre barrière
   if(t.type==="fruittree"){
     if(t.fruits>0){
       const id = FRUIT_KINDS[t.kind].fruit;
@@ -175,7 +177,17 @@ const PLACEABLES = {
   atelier_taille:   "atelier_taille",
   atelier_alchimie: "atelier_alchimie",
   embarcadere:      "embarcadere",
+  // défenses : le type de décor = l'id de l'objet
+  cloture_bois:     "cloture_bois",
+  palissade:        "palissade",
+  mur_basalte:      "mur_basalte",
+  portail_bois:     "portail_bois",
+  pieu_piege:       "pieu_piege",
+  filet_chasse:     "filet_chasse",
 };
+/* Murs/portails : bloquent + ont des PV ; pièges : ne bloquent pas, se déclenchent. */
+const DESTRUCTIBLE = new Set(["cloture_bois","palissade","mur_basalte","portail_bois"]);
+const TRAP_DECOR   = new Set(["pieu_piege","filet_chasse"]);
 /* Types de décor reconnus comme stations de fabrication (pour l'interaction). */
 const STATION_KINDS = {
   fire:"feu", marmite:"marmite", etabli:"etabli",
@@ -321,10 +333,60 @@ function tryPlaceBuild(){
   const decorType = PLACEABLES[build.item];
   const nd = { type:decorType, tx:anchor.tx, ty:anchor.ty };
   if(decorType==="fire") nd.ph = Math.random()*6.28;
+  if(DESTRUCTIBLE.has(decorType)) nd.hp = ITEMS[build.item].placeHp;   // PV des murs/portails
   if(tiles.length>1) nd.foot = tiles.map(t => [t.tx, t.ty]);
   decor.push(nd);
-  for(const t of tiles) blocked[t.ty][t.tx] = true;
+  if(!TRAP_DECOR.has(decorType)) for(const t of tiles) blocked[t.ty][t.tx] = true;  // pièges = non bloquants
   refreshUI();
   const sp = toScreen(anchor.tx+0.5, anchor.ty+0.5);
   burst(sp.x, sp.y-6, decorType==="fire" ? "#e8743f" : "#c8a050", 8);
+}
+
+/* ── Barrières destructibles ── */
+function barrierAt(tx, ty){
+  return decor.find(d => DESTRUCTIBLE.has(d.type) && d.tx===tx && d.ty===ty) || null;
+}
+function damageBarrier(d, dmg){
+  d.hp -= dmg; d.shake = 0.2;
+  const s = toScreen(d.tx+0.5, d.ty+0.5);
+  burst(s.x, s.y-6, "#8a6240", 5);
+  if(d.hp<=0){
+    blocked[d.ty][d.tx] = false;
+    const i = decor.indexOf(d); if(i>=0) decor.splice(i,1);
+    burst(s.x, s.y-6, "#6b4a2d", 12);
+  }
+}
+/* Un kobold chargeur bloqué par une barrière la ronge (sur cooldown). */
+function kobAttackBarrier(k, fx, fy){
+  if(k.state!=="charge" || k.atkCd>0) return;
+  const b = barrierAt(Math.floor(fx), Math.floor(fy));
+  if(!b) return;
+  damageBarrier(b, KOBOLD_TYPES[k.type].dmg);
+  k.atkCd = 1.0;
+  const ks = toScreen(k.x, k.y);
+  floats.push({sx:ks.x, sy:ks.y-12, t:0.6, str:"*gnac*", c:"#8a6240"});
+}
+
+/* ── Pièges au sol (déclenchés par les kobolds qui marchent dessus) ── */
+function checkTraps(){
+  for(let i=decor.length-1; i>=0; i--){
+    const d = decor[i];
+    if(d.type!=="pieu_piege" && d.type!=="filet_chasse") continue;
+    const k = kobolds.find(e => !e.dead && !e.netT && Math.floor(e.x)===d.tx && Math.floor(e.y)===d.ty);
+    if(!k) continue;
+    const s = toScreen(d.tx+0.5, d.ty+0.5);
+    if(d.type==="pieu_piege"){
+      k.hp -= 5; k.hurtT = 0.3; k.alertT = 3; k.state = "charge"; k.t = 5;
+      floats.push({sx:s.x, sy:s.y-12, t:1, str:"-5", c:"#c0473f"});
+      burst(s.x, s.y-6, "#c0473f", 8);
+      decor.splice(i,1);
+      if(k.hp<=0) killKobold(k);
+    } else {                                   // filet : immobilise, récupérable
+      k.netT = 8;
+      floats.push({sx:s.x, sy:s.y-12, t:1.2, str:"pris au filet !", c:"#c4a46a"});
+      burst(s.x, s.y-6, "#c4a46a", 6);
+      decor.splice(i,1);
+      groundItems.push({id:"filet_chasse", qty:1, x:d.tx+0.5, y:d.ty+0.5, ph:Math.random()*6.28, cool:1});
+    }
+  }
 }

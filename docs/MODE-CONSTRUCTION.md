@@ -2,11 +2,17 @@
 
 *Voir [CRAFTING-LEVEL-DESIGN.md](CRAFTING-LEVEL-DESIGN.md) · [CONSTRUCTIONS.md](CONSTRUCTIONS.md) · [CONTROL.md](CONTROL.md)*
 
-> **Statut : implémenté (MVP + empreintes/rotation).** Les ateliers se construisent via le menu
-> **🔨 (B)** → fantôme devant le joueur (vert/rouge) → **E / clic** valide, **R** pivote,
-> **Échap / clic droit** annule. Coût consommé à la pose. Les ateliers sont retirés des fenêtres
-> de craft. Reste à faire : groupe **Défenses** (nécessite sprites + PV des barrières), réglage
-> de distance, peaufinage tactile (bouton ⟳).
+> **Statut : implémenté (ateliers + défenses).** Tout se construit via le menu **🔨 (B)** →
+> fantôme devant le joueur (vert/rouge) → **E / clic** valide, **R** pivote, **Échap / clic droit**
+> annule. Coût consommé à la pose. Groupes **Ateliers** et **Défenses** ; toutes les constructions
+> sont retirées des fenêtres de craft.
+>
+> **Défenses livrées** : clôture / palissade / mur de basalte / portail (bloquent, ont des PV,
+> détruits par le joueur **E** ou rongés par les kobolds chargeurs) ; **pieu** (5 dégâts au kobold
+> qui marche dessus, consommé) ; **filet** (immobilise un kobold 8 s, récupérable au sol).
+>
+> Reste à faire : portail ouvrable (bloque tout le monde pour l'instant), pièges actifs aussi
+> contre les animaux, réglage de distance, bouton ⟳ tactile.
 
 ---
 

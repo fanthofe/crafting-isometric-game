@@ -208,6 +208,7 @@ const elBuildList = document.getElementById("buildList");
 
 const BUILD_GROUPS = [
   {label:"ATELIERS", items:["feu","etabli","marmite","atelier_alchimie","atelier_taille","embarcadere"]},
+  {label:"DÉFENSES", items:["cloture_bois","palissade","portail_bois","mur_basalte","pieu_piege","filet_chasse"]},
 ];
 
 function toggleBuildMenu(){
