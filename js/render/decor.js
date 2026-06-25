@@ -3,13 +3,22 @@
 
 const TREES = [0,1].map(v=>
   makeCanvas(40,52,g=>{
+    // Tronc avec ombre
     g.fillStyle="#7a5536"; g.fillRect(18,38,4,12);
     g.fillStyle="#5f4128"; g.fillRect(18,38,1,12);
+    g.fillStyle="#8a6240"; g.fillRect(21,38,1,12);
     const greens = v? ["#3f8f4f","#4ea75d","#67bd72"] : ["#37804a","#469a58","#5cb169"];
+
     const blob=(cxp,cyp,w,h,col)=>{
       g.fillStyle=col; g.beginPath();
       g.moveTo(cxp,cyp-h); g.lineTo(cxp+w,cyp); g.lineTo(cxp,cyp+h); g.lineTo(cxp-w,cyp); g.closePath(); g.fill();
+      // Highlight 2.5D
+      g.fillStyle="rgba(255,255,255,0.12)";
+      g.beginPath();
+      g.moveTo(cxp,cyp-h); g.lineTo(cxp+w*0.7, cyp-h*0.3); g.lineTo(cxp, cyp); g.lineTo(cxp-w*0.7, cyp-h*0.3);
+      g.closePath(); g.fill();
     };
+
     blob(20,30,17,11,greens[0]); blob(20,22,14,10,greens[1]); blob(20,14,10,8,greens[2]);
     g.fillStyle="rgba(255,255,255,0.25)";
     g.fillRect(14,12,2,1); g.fillRect(24,19,2,1); g.fillRect(11,27,2,1);
@@ -39,6 +48,11 @@ const FRUIT_TREES_IMG = FRUIT_KINDS.map(k=>
 function leafBlob(g,cxp,cyp,w,h,col){
   g.fillStyle=col; g.beginPath();
   g.moveTo(cxp,cyp-h); g.lineTo(cxp+w,cyp); g.lineTo(cxp,cyp+h); g.lineTo(cxp-w,cyp); g.closePath(); g.fill();
+  // Highlight 2.5D
+  g.fillStyle="rgba(255,255,255,0.15)";
+  g.beginPath();
+  g.moveTo(cxp,cyp-h); g.lineTo(cxp+w*0.7, cyp-h*0.3); g.lineTo(cxp, cyp); g.lineTo(cxp-w*0.7, cyp-h*0.3);
+  g.closePath(); g.fill();
 }
 const CHENE = makeCanvas(40,52,g=>{
   g.fillStyle="#6f4c30"; g.fillRect(17,34,6,16); g.fillStyle="#54371f"; g.fillRect(17,34,2,16);
@@ -96,6 +110,9 @@ const ROCKS = [0,1].map(v=>
     if(v===0){ g.fillRect(4,5,14,7); g.fillRect(7,2,8,4); }
     else { g.fillRect(3,6,10,6); g.fillRect(11,4,8,8); }
     g.fillStyle="#c4cacd"; g.fillRect(7,3,4,2); g.fillRect(5,6,3,2);
+    // Cracks and highlights
+    g.fillStyle="rgba(255,255,255,0.3)"; g.fillRect(v===0?8:12, v===0?3:5, 3,1);
+    g.fillStyle="rgba(0,0,0,0.15)"; g.fillRect(v===0?10:14, v===0?6:8, 2,1);
     g.fillStyle="#6e767b"; g.fillRect(4,10,14,2);
   })
 );

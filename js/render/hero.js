@@ -4,7 +4,7 @@
 function drawHero(g, px, py, dir, frame, walking, swing){
   const P = (x,y,w,h,c)=>{ g.fillStyle=c; g.fillRect(Math.round(px+x), Math.round(py+y), w, h); };
   const bob = walking && (frame===1||frame===3) ? -1 : 0;
-  const skin="#c68a5a", skinD="#a8703f", hair="#1d1d22", moko="#6b4a33";
+  const skin="#d9a073", skinD="#a8703f", hair="#2d2d35", moko="#6b4a33";
   const hasTorse = !!equip.torse;
   const torseC = hasTorse ? "#8a6240" : skin;
   g.fillStyle="rgba(20,40,20,0.30)";
@@ -17,6 +17,8 @@ function drawHero(g, px, py, dir, frame, walking, swing){
   else { P(3, 13+bob, 1, 1, skinD); P(6, 13+bob, 1, 1, skinD); }
 
   P(2, 6+bob, 6, 4, torseC);
+  // Highlight torse
+  P(3, 6+bob, 4, 1, "rgba(255,255,255,0.15)");
   if(hasTorse){ P(2, 8+bob, 6, 1, "#6f4c30"); P(4, 6+bob, 2, 1, "#6f4c30"); }
   else { P(3, 7+bob, 1, 1, moko); P(5, 8+bob, 1, 1, moko); P(6, 7+bob, 1, 1, moko); }
   P(2, 10+bob, 6, 2, "#a3754d");
@@ -47,6 +49,9 @@ function drawHero(g, px, py, dir, frame, walking, swing){
   }
 
   P(3, 1+bob, 5, 5, skin);
+  // Highlight tête 2.5D
+  P(4, 1+bob, 3, 1, "rgba(255,255,255,0.2)");
+
   if(dir==="up"){ P(3,1+bob,5,4,hair); }
   else {
     P(3,1+bob,5,2,hair);
