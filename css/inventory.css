@@ -250,37 +250,78 @@
 }
 #dropZone:hover { border-color: #c8a050; color: #e8dcc0; }
 
-/* ── CRAFT tab ── */
-#craftFilters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.cfbtn {
-  font-family: inherit;
-  font-size: 13px;
-  letter-spacing: .8px;
-  padding: 7px 16px;
-  background: #1c180e;
-  border: 1px solid #3e3222;
+/* ── Lanceur d'artisanat mains nues ── */
+#handCraftBtn {
+  font-size: 15px;
+  text-align: center;
+  padding: 9px 14px;
+  border: 1px solid #4a3e28;
   border-radius: 5px;
-  color: #6a5a3a;
-  cursor: pointer;
-  line-height: 1;
-  transition: color .1s, border-color .1s;
-}
-.cfbtn:hover { color: #e8dcc0; border-color: #7a6038; }
-.cfbtn.active {
-  background: #342a18;
-  border-color: #c8a050;
+  background: #211c10;
   color: #c8a050;
+  cursor: pointer;
+  letter-spacing: .5px;
+  transition: border-color .1s, background .1s;
 }
+#handCraftBtn:hover { border-color: #c8a050; background: #2e2616; }
 
-#invRecipes {
+/* ── Fenêtres de fabrication & de construction (au pied de l'outil / mode build) ── */
+#craftWin, #buildWin {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(92vw, 560px);
+  max-height: 88vh;
+  background: #1a1610;
+  border: 2px solid #4a3e28;
+  border-radius: 8px;
+  color: #e8dcc0;
+  display: none;
+  flex-direction: column;
+  z-index: 11;
+  box-shadow: 0 0 0 1px #0a0806, 0 16px 60px rgba(0,0,0,.92),
+              inset 0 1px 0 rgba(200,160,80,.10);
+  overflow: hidden;
+  font-family: inherit;
+}
+#craftWin.open, #buildWin.open { display: flex; }
+.cwHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #0e0c08;
+  border-bottom: 2px solid #3a3020;
+  flex-shrink: 0;
+}
+.cwTitle {
+  display: block;
+  font-size: 16px;
+  letter-spacing: 4px;
+  color: #c8a050;
+  text-shadow: 0 0 16px rgba(200,160,80,.3);
+}
+.cwSub {
+  display: block;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: #7a6a4a;
+  margin-top: 3px;
+}
+.cwClose {
+  background: none; border: none;
+  color: #5a4a2a; cursor: pointer;
+  font-size: 20px; line-height: 1;
+  font-family: inherit;
+  transition: color .1s;
+}
+.cwClose:hover { color: #e8dcc0; }
+#craftRecipes, #buildList {
   display: flex;
   flex-wrap: wrap;
   gap: 7px;
-  max-height: 340px;
+  padding: 14px 16px;
+  max-height: 60vh;
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: thin;

@@ -312,7 +312,7 @@ function loop(now){
         } else if(!ao.seenPlanche && countItem("bois")>=2 && countItem("planche")<1){
           spiritSay("ao","Tu as du bois ! Ouvre l'inventaire (I) et fabrique des planches.",5); ao.seenPlanche=true; ao.cooldown=20;
         } else if(!ao.seenFeu && countItem("planche")>=2 && countItem("pierre")>=2){
-          spiritSay("ao","Planches et pierre — tu peux crafter un feu de camp. Pose-le avec F.",5); ao.seenFeu=true; ao.cooldown=20;
+          spiritSay("ao","Planches et pierre — construis un feu de camp avec F (ou le menu 🔨).",5); ao.seenFeu=true; ao.cooldown=20;
         } else if(player.hp<=player.maxHp*0.4){
           spiritSay("ao","Tu es blessé. Mange un fruit pour récupérer.",4); ao.cooldown=15;
         } else if(kobolds.some(k=>!k.dead && Math.hypot(k.x-player.x,k.y-player.y)<10)){
@@ -654,6 +654,40 @@ function loop(now){
         // étincelle
         if(Math.floor(t*4+d.ph)%3===0){ cx.fillStyle="#ffd98a"; cx.fillRect(fx+(ff?2:-3), fy-12, 1,1); }
         addLight(fx, fy - 4, 50 + 28*deep, 255, 140, 50, (0.20 + 0.28*deep) * fl2);
+        // indice d'interaction (grillades) quand le joueur est à portée
+        if(gameMode==="explore" && !player.boat &&
+           Math.hypot(d.tx+0.5-player.x, d.ty+0.5-player.y) < 1.7){
+          cx.font = "5px monospace"; cx.textAlign="center";
+          const lbl = "Feu de camp", tw2 = cx.measureText(lbl).width, ly = fy-14;
+          cx.fillStyle="rgba(10,8,6,0.7)"; cx.fillRect(fx-tw2/2-2, ly-7, tw2+4, 7);
+          cx.fillStyle="#e8c870"; cx.fillText(lbl, fx, ly-1.5);
+          cx.fillStyle="#b8d898"; cx.fillRect(fx-1, ly+1, 2, 2);
+          cx.textAlign="left";
+        }
+      }
+      else if(STATION_IMG[d.type]){
+        const img = STATION_IMG[d.type];
+        const sxp = Math.round(bx), syp = Math.round(by);
+        cx.fillStyle="rgba(20,30,20,0.28)";
+        cx.beginPath(); cx.ellipse(sxp, syp+1, img.width/2-2, 2.4, 0, 0, 7); cx.fill();
+        cx.drawImage(img, sxp-Math.round(img.width/2), syp-img.height+4);
+        // vapeur animée si marmite active
+        if(d.type==="marmite" && marmiteActive(d) && Math.floor(t*3+d.tx)%2){
+          cx.fillStyle="rgba(220,220,230,0.4)";
+          cx.fillRect(sxp-2, syp-img.height-2, 2, 2);
+        }
+        // indice d'interaction quand le joueur est à portée
+        if(gameMode==="explore" && !player.boat &&
+           Math.hypot(d.tx+0.5-player.x, d.ty+0.5-player.y) < 1.7){
+          const lbl = ITEMS[STATION_KINDS[d.type]].name;
+          cx.font = "5px monospace"; cx.textAlign="center";
+          const tw2 = cx.measureText(lbl).width;
+          const ly = syp-img.height-2;
+          cx.fillStyle="rgba(10,8,6,0.7)"; cx.fillRect(sxp-tw2/2-2, ly-7, tw2+4, 7);
+          cx.fillStyle="#e8c870"; cx.fillText(lbl, sxp, ly-1.5);
+          cx.fillStyle="#b8d898"; cx.fillRect(sxp-1, ly+1, 2, 2);
+          cx.textAlign="left";
+        }
       }
       else if(d.type==="flower"){
         const sw = Math.round(Math.sin(t*2+d.ph)*1.2);
@@ -670,6 +704,28 @@ function loop(now){
         cx.fillRect(fx+2+sw, fy-4, 1, 4);
       }
       cx.globalAlpha = 1;   // on rétablit l'opacité après un éventuel fondu d'arbre
+    }
+  }
+
+  // fantôme du mode construction (devant le joueur : vert = posable, rouge = interdit)
+  if(gameMode==="explore" && build.active && build.item){
+    const tiles = buildTiles();
+    const ok = buildValid();
+    const c = ok ? [120,210,120] : [220,70,60];
+    for(const tl of tiles){
+      const s = toScreen(tl.tx, tl.ty);
+      cx.save();
+      cx.translate(s.x+ox-TW/2, s.y+oy);
+      cx.beginPath(); cx.moveTo(TW/2,0); cx.lineTo(TW,TH/2); cx.lineTo(TW/2,TH); cx.lineTo(0,TH/2); cx.closePath();
+      cx.fillStyle   = `rgba(${c[0]},${c[1]},${c[2]},0.28)`; cx.fill();
+      cx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},0.9)`; cx.lineWidth=1; cx.stroke();
+      cx.restore();
+    }
+    const gi = (ok ? GHOST_OK : GHOST_BAD)[build.item];
+    if(gi){
+      const a = tiles[0], s = toScreen(a.tx+0.5, a.ty+0.5);
+      const gx = Math.round(s.x+ox) - Math.round(gi.width/2), gy = Math.round(s.y+oy) - gi.height + 4;
+      cx.globalAlpha = 0.7; cx.drawImage(gi, gx, gy); cx.globalAlpha = 1;
     }
   }
 

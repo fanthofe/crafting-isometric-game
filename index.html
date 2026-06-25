@@ -14,7 +14,7 @@
 <canvas id="game"></canvas>
 <div id="hud">
   <h1>KAIMANA</h1>
-  <p>Flèches / ZQSD : marcher · E : action / embarquer / pêcher · I : inventaire · F : poser un feu</p>
+  <p>Flèches / ZQSD : marcher · E : action / valider la pose · B : construire · R : pivoter · C : artisanat · I : inventaire · F : feu</p>
   <p id="meteo"></p>
 </div>
 <div id="bar"></div>
@@ -24,7 +24,6 @@
     <span id="invTitle">KAIMANA</span>
     <div id="invTabs">
       <button class="itab active" data-tab="inv">INV</button>
-      <button class="itab" data-tab="craft">CRAFT</button>
       <button class="itab" data-tab="skills">SKILLS</button>
     </div>
     <button id="closeInv">✕</button>
@@ -41,18 +40,36 @@
         <div id="grid"></div>
         <div id="weightRow"><span>⚖</span><div id="weightBar"><div id="weightFill"></div></div><span id="weightTxt"></span></div>
         <div id="dropZone">🗑 Jeter l'objet tenu</div>
+        <div id="handCraftBtn">🛠 Artisanat — mains nues</div>
       </div>
     </div>
-  </div>
-  <div class="itabpanel" data-panel="craft" style="display:none">
-    <div class="seclabel">FABRICATION</div>
-    <div id="craftFilters"></div>
-    <div id="invRecipes"></div>
   </div>
   <div class="itabpanel" data-panel="skills" style="display:none">
     <div id="skills"></div>
   </div>
   <div class="hint">Clic : prendre / poser · Clic droit : moitié · Double-clic : utiliser / équiper</div>
+</div>
+<div id="craftWin">
+  <div class="cwHeader">
+    <div>
+      <span class="cwTitle" id="craftWinTitle">FABRICATION</span>
+      <span class="cwSub" id="craftWinSub"></span>
+    </div>
+    <button class="cwClose" id="closeCraftWin">✕</button>
+  </div>
+  <div id="craftRecipes"></div>
+  <div class="hint">Fabrique au pied de l'outil · E pour interagir · Échap pour fermer</div>
+</div>
+<div id="buildWin">
+  <div class="cwHeader">
+    <div>
+      <span class="cwTitle">CONSTRUIRE</span>
+      <span class="cwSub">Choisis une construction, puis place-la</span>
+    </div>
+    <button class="cwClose" id="closeBuildWin">✕</button>
+  </div>
+  <div id="buildList"></div>
+  <div class="hint">Place devant toi · vert = OK, rouge = interdit · E/clic valide · R pivote · Échap annule</div>
 </div>
 <div id="held"><span class="ic"></span><span class="q"></span></div>
 <div id="tip"></div>
@@ -64,6 +81,7 @@
 </div>
 <div id="touchBtns">
   <button class="tb" id="btnAct">🪓</button>
+  <button class="tb" id="btnBuild">🔨</button>
   <button class="tb" id="btnInv">🎒</button>
 </div>
 

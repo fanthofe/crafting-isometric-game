@@ -103,6 +103,95 @@ const PEBBLES = makeCanvas(18,8,g=>{
   g.fillStyle="#9aa2a6"; g.fillRect(3,3,4,3); g.fillRect(10,4,5,3);
   g.fillStyle="#6e767b"; g.fillRect(3,5,4,1); g.fillRect(10,6,5,1);
 });
+/* ── Stations de fabrication posables ── */
+const ETABLI_IMG = makeCanvas(28,24,g=>{
+  // plateau + pieds
+  g.fillStyle="#7a5536"; g.fillRect(3,12,22,4);
+  g.fillStyle="#caa173"; g.fillRect(3,12,22,1);
+  g.fillStyle="#5f4128"; g.fillRect(5,16,3,6); g.fillRect(20,16,3,6);
+  // étau / outils sur le plateau
+  g.fillStyle="#9aa2a6"; g.fillRect(7,7,3,5); g.fillRect(18,8,2,4);
+  g.fillStyle="#c4cacd"; g.fillRect(7,7,3,1);
+  g.fillStyle="#8a6240"; g.fillRect(12,6,5,6); // pièce de bois en travail
+  g.fillStyle="rgba(255,255,255,0.18)"; g.fillRect(4,12,2,1);
+});
+const MARMITE_IMG = makeCanvas(24,22,g=>{
+  // foyer de pierres
+  g.fillStyle="#9aa2a6"; g.fillRect(3,16,4,3); g.fillRect(17,16,4,3); g.fillRect(10,18,4,2);
+  g.fillStyle="#6e767b"; g.fillRect(3,18,4,1); g.fillRect(17,18,4,1);
+  // marmite
+  g.fillStyle="#2e2e32"; g.fillRect(6,9,12,8);
+  g.fillStyle="#3a3a40"; g.fillRect(6,9,12,2);
+  g.fillStyle="#1c1c20"; g.fillRect(6,15,12,2);
+  // anses + rebord
+  g.fillStyle="#444"; g.fillRect(4,11,2,3); g.fillRect(18,11,2,3);
+  g.fillStyle="#5a5a60"; g.fillRect(6,9,12,1);
+  // vapeur
+  g.fillStyle="rgba(220,220,230,0.5)"; g.fillRect(10,5,2,2); g.fillRect(13,3,2,2);
+});
+const ATELIER_TAILLE_IMG = makeCanvas(26,24,g=>{
+  // bloc de taille en basalte
+  g.fillStyle="#4a4a5a"; g.fillRect(4,10,18,10);
+  g.fillStyle="#5a5a6c"; g.fillRect(4,10,18,2);
+  g.fillStyle="#34343f"; g.fillRect(4,18,18,2);
+  // éclats de jade dessus
+  g.fillStyle="#3aa07a"; g.fillRect(8,7,4,3); g.fillStyle="#5fc89a"; g.fillRect(8,7,2,1);
+  // maillet de pierre
+  g.fillStyle="#7a5536"; g.fillRect(16,4,2,7);
+  g.fillStyle="#9aa2a6"; g.fillRect(14,4,6,3);
+  g.fillStyle="rgba(255,255,255,0.15)"; g.fillRect(5,10,2,1);
+});
+const ATELIER_ALCHIMIE_IMG = makeCanvas(28,24,g=>{
+  // table
+  g.fillStyle="#6f4c30"; g.fillRect(3,13,22,4);
+  g.fillStyle="#8a6240"; g.fillRect(3,13,22,1);
+  g.fillStyle="#54371f"; g.fillRect(5,17,3,5); g.fillRect(20,17,3,5);
+  // fioles
+  g.fillStyle="#8ab0c0"; g.fillRect(7,7,3,6); g.fillStyle="#bfe0ee"; g.fillRect(7,9,3,1);
+  g.fillStyle="#8ac070"; g.fillRect(13,6,3,7); g.fillStyle="#c0e89a"; g.fillRect(13,8,3,1);
+  g.fillStyle="#c08ac0"; g.fillRect(19,8,3,5); g.fillStyle="#e8bfe8"; g.fillRect(19,10,3,1);
+  // bouchons
+  g.fillStyle="#5f4128"; g.fillRect(7,6,3,1); g.fillRect(13,5,3,1); g.fillRect(19,7,3,1);
+});
+const EMBARCADERE_IMG = makeCanvas(30,22,g=>{
+  // ponton de planches
+  g.fillStyle="#8a6240"; g.fillRect(3,12,24,5);
+  g.fillStyle="#a07a4a"; g.fillRect(3,12,24,1);
+  g.fillStyle="#6f4c30"; g.fillRect(8,12,1,5); g.fillRect(15,12,1,5); g.fillRect(22,12,1,5);
+  // pieux + amarre
+  g.fillStyle="#5f4128"; g.fillRect(5,8,3,9); g.fillRect(23,8,3,9);
+  g.fillStyle="#7a5536"; g.fillRect(5,8,3,1); g.fillRect(23,8,3,1);
+  g.fillStyle="#caa173"; g.strokeStyle="#caa173"; g.fillRect(7,9,16,1);
+});
+const STATION_IMG = {
+  etabli: ETABLI_IMG, marmite: MARMITE_IMG, atelier_taille: ATELIER_TAILLE_IMG,
+  atelier_alchimie: ATELIER_ALCHIMIE_IMG, embarcadere: EMBARCADERE_IMG,
+};
+
+/* Petit sprite de feu pour l'aperçu fantôme (le feu posé est dessiné à la volée). */
+const FEU_GHOST_IMG = makeCanvas(16,14,g=>{
+  g.fillStyle="#9aa2a6"; g.fillRect(2,10,3,2); g.fillRect(11,10,3,2); g.fillRect(6,11,4,2);
+  g.fillStyle="#5f4128"; g.fillRect(4,9,8,2);
+  g.fillStyle="#e8743f"; g.fillRect(5,4,6,6); g.fillRect(6,2,3,2);
+  g.fillStyle="#f4c542"; g.fillRect(6,5,3,4);
+});
+
+/* Variantes teintées pour le fantôme du mode construction (vert = posable, rouge = interdit). */
+function tintSprite(src, r, g, b){
+  return makeCanvas(src.width, src.height, c=>{
+    c.drawImage(src, 0, 0);
+    c.globalCompositeOperation = "source-atop";
+    c.fillStyle = `rgba(${r},${g},${b},0.5)`;
+    c.fillRect(0, 0, src.width, src.height);
+  });
+}
+const GHOST_SRC = Object.assign({feu: FEU_GHOST_IMG}, STATION_IMG);
+const GHOST_OK = {}, GHOST_BAD = {};
+for(const k in GHOST_SRC){
+  GHOST_OK[k]  = tintSprite(GHOST_SRC[k], 120, 210, 120);
+  GHOST_BAD[k] = tintSprite(GHOST_SRC[k], 220,  70,  60);
+}
+
 const PALM_TREE = [0,1].map(v=>
   makeCanvas(40,60,g=>{
     g.fillStyle="#a07840"; g.fillRect(17,44,4,14);

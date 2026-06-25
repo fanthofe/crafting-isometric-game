@@ -3,14 +3,11 @@
 
 const elInv          = document.getElementById("inv");
 const elGrid         = document.getElementById("grid");
-const elRecipes      = document.getElementById("invRecipes");
 const elEquip        = document.getElementById("equipRow");
 const elWeightTxt    = document.getElementById("weightTxt");
 const elWeightFill   = document.getElementById("weightFill");
 const elStats        = document.getElementById("statsRow");
-const elCraftFilters = document.getElementById("craftFilters");
 
-let craftFilter = null; // null = contextuel, "" = main, "etabli"|"marmite"|… = forcé
 let activeTab   = "inv";
 
 /* ─── Génère les 36 slots de la grille ─── */
@@ -117,69 +114,73 @@ document.getElementById("dropZone").addEventListener("click", ()=>{
   held=null; updateHeld(); refreshUI();
 });
 document.getElementById("closeInv").onclick = ()=>toggleInv(false);
+document.getElementById("handCraftBtn").addEventListener("click", ()=>openHandCraft());
 
-/* ─── Onglets ─── */
+/* ─── Onglets (inventaire / compétences) ─── */
 function switchTab(name){
+  if(name === "craft") name = "inv";   // l'onglet craft n'existe plus
   activeTab = name;
   document.querySelectorAll(".itab").forEach(b => b.classList.toggle("active", b.dataset.tab===name));
   document.querySelectorAll(".itabpanel").forEach(p => {
     p.style.display = p.dataset.panel === name ? "flex" : "none";
   });
-  if(name === "craft") refreshCraft();
 }
 document.querySelectorAll(".itab").forEach(b => b.addEventListener("click", ()=>switchTab(b.dataset.tab)));
 
-/* ─── Filtres fabrication ─── */
-const CRAFT_FILTERS = [
-  {filter:null,                label:"AUTO"},
-  {filter:"",                  label:"MAIN"},
-  {filter:"etabli",            label:"ÉTABLI"},
-  {filter:"atelier_taille",    label:"TAILLE"},
-  {filter:"atelier_alchimie",  label:"ALCHIMIE"},
-  {filter:"marmite",           label:"MARMITE"},
-  {filter:"embarcadere",       label:"EMBARCAD."},
-];
-for(const cf of CRAFT_FILTERS){
-  const b = document.createElement("button");
-  b.className = "cfbtn" + (cf.filter === null ? " active" : "");
-  b.dataset.filter = cf.filter === null ? "__auto__" : cf.filter;
-  b.textContent = cf.label;
-  b.addEventListener("click", ()=>{
-    craftFilter = cf.filter;
-    document.querySelectorAll(".cfbtn").forEach(x => {
-      const isAuto = x.dataset.filter === "__auto__";
-      x.classList.toggle("active", cf.filter === null ? isAuto : x.dataset.filter === cf.filter);
-    });
-    refreshCraft();
+/* ════════════════════════════════════════════════════════════════
+   Fabrication diégétique : une fenêtre par outil de construction.
+   Plus aucune recette dans l'inventaire — on craft AU pied de l'outil.
+   ════════════════════════════════════════════════════════════════ */
+const elCraftWin     = document.getElementById("craftWin");
+const elCraftTitle   = document.getElementById("craftWinTitle");
+const elCraftSub     = document.getElementById("craftWinSub");
+const elCraftRecipes = document.getElementById("craftRecipes");
+
+let craftStation = null;  // null = fermé ; "" = mains nues ; sinon id d'outil
+let craftCold    = false; // marmite sans feu actif
+
+const STATION_LABELS = {
+  "":               {title:"ARTISANAT — MAINS NUES", sub:"Survie & constructions à poser"},
+  feu:              {title:"FEU DE CAMP",            sub:"Grillades"},
+  marmite:          {title:"MARMITE",                sub:"Cuisine élaborée"},
+  etabli:           {title:"ÉTABLI",                 sub:"Armes, outils & matériaux"},
+  atelier_taille:   {title:"ATELIER DE TAILLE",      sub:"Pierre noble & armes lunaires"},
+  atelier_alchimie: {title:"ATELIER D'ALCHIMIE",     sub:"Potions & bombes"},
+  embarcadere:      {title:"EMBARCADÈRE",            sub:"Grands navires & harpon"},
+};
+
+function openHandCraft(){ if(gameMode==="explore") openCraft(""); }
+
+function openStationCraft(d){
+  const id = STATION_KINDS[d.type];
+  craftCold = (id === "marmite" && !marmiteActive(d));
+  openCraft(id);
+}
+
+function openCraft(stationId){
+  if(elInv.classList.contains("open")) toggleInv(false);
+  if(stationId !== "marmite") craftCold = false;
+  craftStation = stationId;
+  const meta = STATION_LABELS[stationId] || {title:"FABRICATION", sub:""};
+  elCraftTitle.textContent = meta.title;
+  elCraftSub.textContent   = craftCold ? "⚠ marmite froide — allume un feu juste à côté" : meta.sub;
+  elCraftWin.classList.add("open");
+  elTip.style.display = "none";
+  renderCraftWin();
+}
+
+function closeCraft(){ craftStation = null; elCraftWin.classList.remove("open"); }
+
+function renderCraftWin(){
+  if(craftStation === null) return;
+  // Les constructions (objets posables) passent par le mode construction, pas par le craft.
+  const list = RECIPES.filter(r => {
+    if(PLACEABLES[Object.keys(r.gives)[0]]) return false;
+    return craftStation === "" ? !r.req : r.req === craftStation;
   });
-  elCraftFilters.appendChild(b);
-}
-
-/* ─── Recettes contextuelles ─── */
-function nearbyWorkshop(){
-  const ws = new Set();
-  const WORKSHOP_TYPES = ["etabli","atelier_taille","atelier_alchimie","marmite","embarcadere"];
-  for(const d of decor){
-    if(!WORKSHOP_TYPES.includes(d.type)) continue;
-    if(Math.hypot(d.tx+0.5-player.x, d.ty+0.5-player.y) <= 6) ws.add(d.type);
-  }
-  return ws;
-}
-
-function recipesToShow(){
-  if(craftFilter === null){
-    const ws = nearbyWorkshop();
-    return RECIPES.filter(r => !r.req || ws.has(r.req));
-  }
-  if(craftFilter === "") return RECIPES.filter(r => !r.req);
-  return RECIPES.filter(r => r.req === craftFilter);
-}
-
-function refreshCraft(){
-  const list = recipesToShow();
-  elRecipes.innerHTML = "";
+  elCraftRecipes.innerHTML = "";
   for(const rec of list){
-    const avail = canCraft(rec);
+    const avail = !craftCold && canCraft(rec);
     const card = document.createElement("div");
     card.className = "rcard " + (avail ? "rcavail" : "rccant");
     const iconId = Object.keys(rec.gives)[0];
@@ -188,25 +189,67 @@ function refreshCraft(){
       <span class="rname">${rec.label}</span>
       <span class="rcost">${costStr}</span>`;
     const b = document.createElement("button");
-    b.className = "rbtn"; b.textContent = "Craft"; b.disabled = !avail;
-    b.addEventListener("click", ()=>{ craft(rec); refreshUI(); refreshCraft(); });
+    b.className = "rbtn"; b.textContent = "Fabriquer"; b.disabled = !avail;
+    b.addEventListener("click", ()=>{ craft(rec); renderCraftWin(); });
     card.appendChild(b);
-    elRecipes.appendChild(card);
+    elCraftRecipes.appendChild(card);
   }
-  // Feu de camp posable
-  if(countItem("feu") > 0 && (craftFilter === null || craftFilter === "")){
-    const card = document.createElement("div"); card.className = "rcard rcavail";
-    card.innerHTML = `<span class="ricon" style="font-size:12px;line-height:16px">🔥</span>
-      <span class="rname">Feu de camp</span><span class="rcost">prêt à poser</span>`;
-    const b = document.createElement("button"); b.className = "rbtn"; b.textContent = "Poser (F)";
-    b.addEventListener("click", ()=>{ toggleInv(false); placeFire(); });
-    card.appendChild(b);
-    elRecipes.appendChild(card);
-  }
-  if(elRecipes.children.length === 0){
-    elRecipes.innerHTML = `<span style="font-size:9px;color:#6a5a3a;padding:8px;align-self:center">Aucune recette disponible ici.</span>`;
+  if(elCraftRecipes.children.length === 0){
+    elCraftRecipes.innerHTML = `<span style="font-size:11px;color:#6a5a3a;padding:10px;align-self:center">Aucune recette ici.</span>`;
   }
 }
+document.getElementById("closeCraftWin").onclick = ()=>closeCraft();
+
+/* ════════════════════════════════════════════════════════════════
+   Menu de construction : choisir une construction → entrer en mode fantôme.
+   ════════════════════════════════════════════════════════════════ */
+const elBuildWin  = document.getElementById("buildWin");
+const elBuildList = document.getElementById("buildList");
+
+const BUILD_GROUPS = [
+  {label:"ATELIERS", items:["feu","etabli","marmite","atelier_alchimie","atelier_taille","embarcadere"]},
+];
+
+function toggleBuildMenu(){
+  if(elBuildWin.classList.contains("open")) closeBuildMenu();
+  else openBuildMenu();
+}
+function openBuildMenu(){
+  if(gameMode!=="explore") return;
+  cancelBuild(); closeCraft();
+  if(elInv.classList.contains("open")) toggleInv(false);
+  elBuildWin.classList.add("open");
+  elTip.style.display = "none";
+  renderBuildMenu();
+}
+function closeBuildMenu(){ elBuildWin.classList.remove("open"); }
+
+function renderBuildMenu(){
+  elBuildList.innerHTML = "";
+  for(const grp of BUILD_GROUPS){
+    const h = document.createElement("div");
+    h.className = "seclabel"; h.style.width = "100%"; h.textContent = grp.label;
+    elBuildList.appendChild(h);
+    for(const id of grp.items){
+      const r = RECIPE_BY_ID[id]; if(!r) continue;
+      const reqOK = !r.req || hasWorkshopNearby(r.req);
+      const ok = reqOK && canCraft(r);
+      const card = document.createElement("div");
+      card.className = "rcard " + (ok ? "rcavail" : "rccant");
+      const costStr = Object.entries(r.cost).map(([k,n]) => `${n}×${ITEMS[k].name.split(" ")[0]}`).join(" ");
+      const sub = !reqOK ? `⚑ près d'un ${ITEMS[r.req].name.split(" ")[0].toLowerCase()}` : costStr;
+      card.innerHTML = `<span class="ricon" style="background-image:url(${ICON[id]})"></span>
+        <span class="rname">${ITEMS[id].name}</span>
+        <span class="rcost">${sub}</span>`;
+      const b = document.createElement("button");
+      b.className = "rbtn"; b.textContent = "Construire"; b.disabled = !ok;
+      b.addEventListener("click", ()=>{ startBuild(id); });
+      card.appendChild(b);
+      elBuildList.appendChild(card);
+    }
+  }
+}
+document.getElementById("closeBuildWin").onclick = ()=>closeBuildMenu();
 
 /* ─── refreshUI : appelée à chaque changement d'état ─── */
 function refreshUI(){
@@ -251,9 +294,6 @@ function refreshUI(){
 
   // Compétences (toujours à jour)
   refreshSkills();
-
-  // Fabrication si onglet actif
-  if(activeTab === "craft") refreshCraft();
 }
 
 function toggleInv(force){
@@ -263,6 +303,7 @@ function toggleInv(force){
     if(left>0) dropOnGround(held.id, left);
     held = null; updateHeld();
   }
+  if(open) closeCraft();   // l'inventaire et la fabrication ne cohabitent pas
   elInv.classList.toggle("open", open);
   elTip.style.display = "none";
   if(open){ switchTab(activeTab); refreshUI(); }

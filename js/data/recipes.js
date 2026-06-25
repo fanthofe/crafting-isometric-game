@@ -6,7 +6,7 @@ const RECIPES = [
   {id:"planche",      label:"Planche",           cost:{bois:2},                      gives:{planche:1}},
   {id:"feu",          label:"Feu de camp",        cost:{planche:2, pierre:2},         gives:{feu:1}},
   {id:"salade",       label:"Salade de fruits",   cost:{pomme:1, prune:1, cerise:1},  gives:{salade:1}},
-  {id:"brochette",    label:"Brochette",          cost:{viande:1, bois:1},            gives:{brochette:1}},
+  {id:"brochette",    label:"Brochette",          cost:{viande:1, bois:1},            gives:{brochette:1},           req:"feu"},
   {id:"torche",       label:"Torche",             cost:{bois:1, cuir:1},              gives:{torche:3}},
   {id:"massue_bois",  label:"Massue en bois",     cost:{bois:4},                      gives:{massue_bois:1}},
   {id:"sagaie",       label:"Sagaie",             cost:{bois:2, pierre:1, plume:1},   gives:{sagaie:1}},
@@ -87,12 +87,12 @@ const RECIPES = [
   {id:"waka_taua",       label:"Waka taua",          cost:{bois_dur:15, planche:10, fibre_coco:6, jade:1, os:4, plume:6},   gives:{waka_taua:1},   req:"embarcadere"},
 
   /* ── Tier 6 : lunaires ── */
-  {id:"taiaha_lunaire",   label:"Taiaha lunaire",       cost:{fourrure_lunaire:1, bois_dur:2, jade:1},            gives:{taiaha_lunaire:1}},
-  {id:"leiomano_lunaire", label:"Leiomano lunaire",     cost:{fourrure_lunaire:1, dent_requin:5, cristal_lunaire:1},gives:{leiomano_lunaire:1}},
-  {id:"u_u_lunaire",      label:"U'u lunaire",          cost:{fourrure_lunaire:2, bois_dur:2, cristal_lunaire:1}, gives:{u_u_lunaire:1}},
-  {id:"arc_lunaire",      label:"Arc lunaire",          cost:{fourrure_lunaire:1, bois:2, cristal_lunaire:1},     gives:{arc_lunaire:1}},
-  {id:"fleche_noire",     label:"Flèches noires (×5)",  cost:{plume_noire:2, bois:1, obsidienne:1},              gives:{fleche_noire:5}},
-  {id:"fleche_lunaire",   label:"Flèches lunaires (×5)",cost:{cristal_lunaire:1, plume_noire:1, bois:1},         gives:{fleche_lunaire:5}},
+  {id:"taiaha_lunaire",   label:"Taiaha lunaire",       cost:{fourrure_lunaire:1, bois_dur:2, jade:1},            gives:{taiaha_lunaire:1},   req:"atelier_taille"},
+  {id:"leiomano_lunaire", label:"Leiomano lunaire",     cost:{fourrure_lunaire:1, dent_requin:5, cristal_lunaire:1},gives:{leiomano_lunaire:1}, req:"atelier_taille"},
+  {id:"u_u_lunaire",      label:"U'u lunaire",          cost:{fourrure_lunaire:2, bois_dur:2, cristal_lunaire:1}, gives:{u_u_lunaire:1},      req:"atelier_taille"},
+  {id:"arc_lunaire",      label:"Arc lunaire",          cost:{fourrure_lunaire:1, bois:2, cristal_lunaire:1},     gives:{arc_lunaire:1},      req:"atelier_taille"},
+  {id:"fleche_noire",     label:"Flèches noires (×5)",  cost:{plume_noire:2, bois:1, obsidienne:1},              gives:{fleche_noire:5},     req:"etabli"},
+  {id:"fleche_lunaire",   label:"Flèches lunaires (×5)",cost:{cristal_lunaire:1, plume_noire:1, bois:1},         gives:{fleche_lunaire:5},   req:"etabli"},
 
   /* ── Potions : atelier alchimie ── */
   {id:"potion_soin",     label:"Potion de soin",          cost:{os:1, plume:2, pomme:1},           gives:{potion_soin:1},     req:"atelier_alchimie"},
@@ -110,8 +110,8 @@ const RECIPES = [
   {id:"soupe_os",        label:"Soupe à l'os",            cost:{os:2, viande:1},                    gives:{soupe_os:1},        req:"marmite"},
   {id:"festin_chasseur", label:"Festin du chasseur",      cost:{viande:3, cuir:1},                  gives:{festin_chasseur:1}, req:"marmite"},
   {id:"confit_sanglier", label:"Confit de sanglier",      cost:{viande:3, graisse:1},               gives:{confit_sanglier:1}, req:"marmite"},
-  {id:"noix_rotie",      label:"Noix de coco rôtie",      cost:{noix_coco:2, charbon:1},            gives:{noix_rotie:1},      req:"marmite"},
-  {id:"poisson_grille",  label:"Poisson grillé",          cost:{poisson:2, charbon:1},              gives:{poisson_grille:1},  req:"marmite"},
+  {id:"noix_rotie",      label:"Noix de coco rôtie",      cost:{noix_coco:2, charbon:1},            gives:{noix_rotie:1},      req:"feu"},
+  {id:"poisson_grille",  label:"Poisson grillé",          cost:{poisson:2, charbon:1},              gives:{poisson_grille:1},  req:"feu"},
   {id:"soupe_requin",    label:"Soupe de requin",         cost:{viande_requin:1, noix_coco:1},      gives:{soupe_requin:1},    req:"marmite"},
   {id:"elixir_fruit",    label:"Élixir polynésien",       cost:{peche:2, cerise:2, prune:1},        gives:{elixir_fruit:1},    req:"marmite"},
 
@@ -121,10 +121,10 @@ const RECIPES = [
   {id:"canne_fer",    label:"Canne en fer",      cost:{planche:2, basalte:2, fibre_coco:3},gives:{canne_fer:1},    req:"etabli"},
 
   /* ── Cuisine marine ── */
-  {id:"sashimi",        label:"Sashimi",              cost:{bec_de_cane:1, charbon:1},                       gives:{sashimi:1},        req:"marmite"},
+  {id:"sashimi",        label:"Sashimi",              cost:{bec_de_cane:1, charbon:1},                       gives:{sashimi:1},        req:"feu"},
   {id:"soyo",           label:"Soyo",                 cost:{bec_de_cane:2, noix_coco:1, charbon:1},          gives:{soyo:1},           req:"marmite"},
-  {id:"huile_friture",  label:"Huile de friture",     cost:{huile_poisson:2, pierre:1},                      gives:{huile_friture:1}},
-  {id:"onction_kaimana",label:"Onction kaimana",      cost:{graisse_baleine:1, foie_requin:1},               gives:{onction_kaimana:1}},
+  {id:"huile_friture",  label:"Huile de friture",     cost:{huile_poisson:2, pierre:1},                      gives:{huile_friture:1},  req:"marmite"},
+  {id:"onction_kaimana",label:"Onction kaimana",      cost:{graisse_baleine:1, foie_requin:1},               gives:{onction_kaimana:1},req:"atelier_alchimie"},
 
   /* ── Arme marine ── */
   {id:"harpon", label:"Harpon de baleine", cost:{os_baleine:2, bois_dur:3, fibre_coco:2}, gives:{harpon:1}, req:"embarcadere"},
