@@ -4,6 +4,13 @@
   --ink:#2b3a2e;
   --panel:#fdf6e3;
   --panel-border:#8a6240;
+
+  /* Thème Héritage Artisanal 2.5D */
+  --p1-wood-light: #d2a763;
+  --p1-wood-mid: #8a6240;
+  --p1-wood-dark: #4a3e28;
+  --p1-paper: #fdf6e3;
+  --p1-accent: #e8743f;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%;overflow:hidden}
