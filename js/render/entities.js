@@ -7,6 +7,9 @@ const ANIMAL_IMG = {
     g.fillRect(8,0,1,3); g.fillRect(10,f,1,3);
     g.fillStyle="#e8b4c0"; g.fillRect(8,1,1,1);
     g.fillStyle="#ffffff"; g.fillRect(1,4,2,2);
+    // Highlights & Shading
+    g.fillStyle="rgba(255,255,255,0.4)"; g.fillRect(8,2,1,1); g.fillRect(3,4,2,1);
+    g.fillStyle="rgba(0,0,0,0.1)"; g.fillRect(2,7,8,1);
     g.fillStyle="#2b2026"; g.fillRect(10,3,1,1);
     g.fillStyle="#9fa4ab";
     if(f){ g.fillRect(3,8,2,2); g.fillRect(7,8,2,2); }
@@ -45,15 +48,19 @@ const ANIMAL_IMG = {
   sanglier: frames2(14,10,(g,f)=>{
     g.fillStyle="#3e2d20"; g.fillRect(2,2,9,1);
     g.fillStyle="#5b4332"; g.fillRect(1,3,10,5); g.fillRect(10,4,3,4);
+    // Highlights & Eyes
+    g.fillStyle="rgba(255,255,255,0.1)"; g.fillRect(2,3,8,1);
+    g.fillStyle="#ff4000"; g.fillRect(11,5,1,1);
     g.fillStyle="#8c6a52"; g.fillRect(13,6,1,2);
     g.fillStyle="#e8e4da"; g.fillRect(12,7,1,1);
-    g.fillStyle="#2b2026"; g.fillRect(11,5,1,1);
     g.fillStyle="#3e2d20";
     if(f){ g.fillRect(3,8,2,2); g.fillRect(9,8,2,2); }
     else { g.fillRect(2,8,2,2); g.fillRect(10,8,2,2); }
   }),
   requin: frames2(16,8,(g,f)=>{
     g.fillStyle="#4a6878"; g.fillRect(0,3,14,3); g.fillRect(13,3,2,2);
+    // Highlights
+    g.fillStyle="rgba(255,255,255,0.15)"; g.fillRect(4,3,8,1); g.fillRect(6,1,1,1);
     g.fillStyle="#6a8898"; g.fillRect(1,3,10,1);
     g.fillStyle="#c8d8e0"; g.fillRect(0,4,3,1);
     g.fillStyle="#2b3a44"; g.fillRect(13,3,1,1);
@@ -88,6 +95,8 @@ const SEA_PREDATOR_IMG = {};
 // orque — noir et blanc, plus large
 SEA_PREDATOR_IMG.orque = frames2(20,10,(g,f)=>{
   g.fillStyle="#1a1a1a"; g.fillRect(0,3,17,4); g.fillRect(16,3,3,3);
+  // Highlights
+  g.fillStyle="rgba(255,255,255,0.15)"; g.fillRect(8,3,6,1); g.fillRect(8,0,1,1);
   g.fillStyle="#e8e8e8"; g.fillRect(0,4,4,2); g.fillRect(5,4,4,2);
   g.fillStyle="#2b2b2b"; g.fillRect(17,4,1,1);
   g.fillStyle="#1a1a1a"; g.fillRect(8,0,3,3); g.fillRect(7,1,1,2); g.fillRect(11,1,1,2);

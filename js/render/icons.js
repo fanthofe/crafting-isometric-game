@@ -8,6 +8,8 @@ const ICON_SRC = {
     g.fillStyle="#6f4c30"; g.fillRect(1,7,9,1); g.fillRect(3,5,4,1);
     g.fillStyle="#d2a763"; g.fillRect(10,4,2,4);
     g.fillStyle="#a87e52"; g.fillRect(10,5,1,2);
+    // Bevel 2.5D
+    g.fillStyle="rgba(255,255,255,0.2)"; g.fillRect(1,4,9,1); g.fillRect(1,4,1,3);
   }),
   pierre: icon12(g=>{
     g.fillStyle="#9aa2a6"; g.fillRect(2,5,8,5); g.fillRect(4,3,5,2);
@@ -18,6 +20,8 @@ const ICON_SRC = {
     g.fillStyle="#d2a763"; g.fillRect(1,3,10,3); g.fillRect(1,7,10,3);
     g.fillStyle="#b08144"; g.fillRect(1,5,10,1); g.fillRect(1,9,10,1);
     g.fillStyle="#6f4c30"; g.fillRect(2,4,1,1); g.fillRect(9,4,1,1); g.fillRect(2,8,1,1); g.fillRect(9,8,1,1);
+    // Bevel 2.5D
+    g.fillStyle="rgba(255,255,255,0.25)"; g.fillRect(1,3,10,1); g.fillRect(1,7,10,1);
   }),
   feu: icon12(g=>{
     g.fillStyle="#5f4128"; g.fillRect(2,9,8,2);
@@ -29,6 +33,8 @@ const ICON_SRC = {
     g.fillStyle="#4ea75d"; g.fillRect(6,2,3,1);
     g.fillStyle="#e0463f"; g.fillRect(3,4,6,6); g.fillRect(2,5,8,4);
     g.fillStyle="#f4978e"; g.fillRect(3,5,2,2);
+    // Shine
+    g.fillStyle="#ffffff"; g.fillRect(4,5,1,1);
   }),
   prune: icon12(g=>{
     g.fillStyle="#6f4c30"; g.fillRect(6,1,1,3);
@@ -91,12 +97,14 @@ const ICON_SRC = {
     for(let i=0;i<7;i++) g.fillRect(2+i, 9-i, 2, 1);
     g.fillStyle="#9aa2a6"; g.fillRect(6,1,5,4); g.fillRect(5,2,1,2);
     g.fillStyle="#c4cacd"; g.fillRect(7,2,3,2);
+    // Shine
+    g.fillStyle="#ffffff"; g.fillRect(10,1,1,1);
   }),
   lance: icon12(g=>{
     g.fillStyle="#8a6240";
     for(let i=0;i<8;i++) g.fillRect(1+i, 10-i, 1, 1);
     g.fillStyle="#c4cacd"; g.fillRect(9,1,2,2); g.fillRect(8,3,1,1);
-    g.fillStyle="#e8ecee"; g.fillRect(10,1,1,1);
+    g.fillStyle="#ffffff"; g.fillRect(10,1,1,1);
   }),
   chapeau: icon12(g=>{
     g.fillStyle="#7a5536"; g.fillRect(2,7,8,2); g.fillRect(4,4,4,3);
@@ -151,6 +159,8 @@ const ICON_SRC = {
     for(let i=0;i<6;i++) g.fillRect(4+i, 8-i, 1, 1);
     g.fillStyle="#c0d4e0"; g.fillRect(9,3,1,1); g.fillRect(10,2,1,1);
     g.fillStyle="#5a7a88"; g.fillRect(3,9,2,2);
+    // Shine
+    g.fillStyle="#ffffff"; g.fillRect(10,2,1,1);
   }),
 };
 const ICON = {};

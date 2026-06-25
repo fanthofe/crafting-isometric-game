@@ -6,7 +6,10 @@ const KOBOLD_IMG = {
     g.fillStyle="#7a7a8a"; g.fillRect(3,0,6,5);
     g.fillStyle="#6a6a7a"; g.fillRect(4,3,4,3);
     g.fillStyle="#8a8a9a"; g.fillRect(2,0,2,3); g.fillRect(8,0,2,3);
+    // Highlights & Eyes
+    g.fillStyle="rgba(255,255,255,0.15)"; g.fillRect(4,0,4,1); g.fillRect(3,6,6,1);
     g.fillStyle="#ffe040"; g.fillRect(4,1,1,2); g.fillRect(7,1,1,2);
+    g.fillStyle="#ffffff"; g.fillRect(4,1,1,1); g.fillRect(7,1,1,1);
     g.fillStyle="#f0f0e0"; g.fillRect(5,5,1,1); g.fillRect(7,5,1,1);
     g.fillStyle="#6a6a7a"; g.fillRect(3,6,6,5); g.fillRect(1,6,2,5); g.fillRect(9,6,2,5);
     g.fillStyle="#b0c0c8"; g.fillRect(1,11,1,2); g.fillRect(2,11,1,2); g.fillRect(9,11,1,2); g.fillRect(10,11,1,2);
@@ -19,7 +22,10 @@ const KOBOLD_IMG = {
     g.fillStyle="#5a5a68"; g.fillRect(3,0,8,5);
     g.fillStyle="#4a4a58"; g.fillRect(4,3,6,3);
     g.fillStyle="#6a6a78"; g.fillRect(2,0,3,3); g.fillRect(9,0,3,3);
+    // Highlights & Eyes
+    g.fillStyle="rgba(255,255,255,0.12)"; g.fillRect(4,0,6,1); g.fillRect(2,6,10,1);
     g.fillStyle="#ff8020"; g.fillRect(4,1,2,2); g.fillRect(8,1,2,2);
+    g.fillStyle="#ffffff"; g.fillRect(4,1,1,1); g.fillRect(8,1,1,1);
     g.fillStyle="#3a2a28"; g.fillRect(7,2,1,3);
     g.fillStyle="#f0f0e0"; g.fillRect(5,5,1,2); g.fillRect(8,5,1,2);
     g.fillStyle="#4a4a58"; g.fillRect(2,6,10,6); g.fillRect(1,9,2,4); g.fillRect(11,9,2,4);
@@ -35,8 +41,10 @@ const KOBOLD_IMG = {
     g.fillStyle="#3a3a48"; g.fillRect(3,0,10,6);
     g.fillStyle="#2a2a38"; g.fillRect(4,4,8,4);
     g.fillStyle="#4a4a58"; g.fillRect(2,0,3,4); g.fillRect(11,0,3,4);
+    // Highlights & Glow
+    g.fillStyle="rgba(255,255,255,0.1)"; g.fillRect(4,0,8,1);
     g.fillStyle="#ff2020"; g.fillRect(4,1,3,2); g.fillRect(9,1,3,2);
-    g.fillStyle="#ff8080"; g.fillRect(4,1,1,1); g.fillRect(9,1,1,1);
+    g.fillStyle="#ffffff"; g.fillRect(4,1,1,1); g.fillRect(9,1,1,1);
     g.fillStyle="#f0f0e0"; g.fillRect(5,7,1,2); g.fillRect(8,7,2,2); g.fillRect(11,7,1,2);
     g.fillStyle="#8ab0c8";
     g.fillRect(0,15,1,3); g.fillRect(1,15,1,3); g.fillRect(2,14,1,3);
