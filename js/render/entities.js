@@ -59,6 +59,8 @@ const ANIMAL_IMG = {
   }),
   requin: frames2(16,8,(g,f)=>{
     g.fillStyle="#4a6878"; g.fillRect(0,3,14,3); g.fillRect(13,3,2,2);
+    // Highlights
+    g.fillStyle="rgba(255,255,255,0.15)"; g.fillRect(4,3,8,1); g.fillRect(6,1,1,1);
     g.fillStyle="#6a8898"; g.fillRect(1,3,10,1);
     g.fillStyle="#c8d8e0"; g.fillRect(0,4,3,1);
     g.fillStyle="#2b3a44"; g.fillRect(13,3,1,1);
@@ -93,6 +95,8 @@ const SEA_PREDATOR_IMG = {};
 // orque — noir et blanc, plus large
 SEA_PREDATOR_IMG.orque = frames2(20,10,(g,f)=>{
   g.fillStyle="#1a1a1a"; g.fillRect(0,3,17,4); g.fillRect(16,3,3,3);
+  // Highlights
+  g.fillStyle="rgba(255,255,255,0.15)"; g.fillRect(8,3,6,1); g.fillRect(8,0,1,1);
   g.fillStyle="#e8e8e8"; g.fillRect(0,4,4,2); g.fillRect(5,4,4,2);
   g.fillStyle="#2b2b2b"; g.fillRect(17,4,1,1);
   g.fillStyle="#1a1a1a"; g.fillRect(8,0,3,3); g.fillRect(7,1,1,2); g.fillRect(11,1,1,2);
