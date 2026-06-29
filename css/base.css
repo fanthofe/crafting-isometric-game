@@ -22,3 +22,9 @@ body{
   touch-action:none;
 }
 canvas{image-rendering:pixelated;image-rendering:crisp-edges;display:block}
+
+/* Masque les éléments HUD/tactiles pendant l'écran titre */
+body.in-menu #hud,
+body.in-menu #bar,
+body.in-menu #dpad,
+body.in-menu #touchBtns { display:none; }

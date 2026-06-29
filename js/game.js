@@ -4,6 +4,24 @@
 /* ====================== Boucle de jeu ====================== */
 let last = performance.now();
 function loop(now){
+  /* ── Écran titre / menus ── */
+  if (gameMode === "menu") {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    menuTick(dt, now / 1000);
+    renderMenu(now / 1000);
+    requestAnimationFrame(loop);
+    return;
+  }
+
+  /* ── Menu pause (overlay sur le jeu figé) ── */
+  if (gameMode === "pause") {
+    last = now;
+    pauseTick(now);
+    renderPauseOverlay(now / 1000);
+    requestAnimationFrame(loop);
+    return;
+  }
+
   pollGamepad();
   const dt = Math.min(0.05, (now-last)/1000); last = now;
   const t = now/1000;
@@ -830,5 +848,6 @@ function loop(now){
 
   requestAnimationFrame(loop);
 }
+initMenu();
 refreshUI();
 requestAnimationFrame(loop);

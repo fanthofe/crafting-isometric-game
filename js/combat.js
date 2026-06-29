@@ -4,7 +4,7 @@
    commandes (Attaquer / Compétences / Défendre / Objets / Fuir), IA, fin de combat. */
 
 /* ====================== État global ====================== */
-let gameMode = "explore";          // "explore" | "battle"
+let gameMode = "menu";             // "menu" | "explore" | "battle"
 
 const battle = {
   active: false,
